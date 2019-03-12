@@ -2,10 +2,19 @@
   "name": "react-data-scroller",
   "version": "0.0.1",
   "description": "react component for scrolling large amounts of data efficiently",
-  "main": "./lib/index.js",
+  "main": "./dist/react-data-scroller.js",
+  "module": "./dist/react-data-scroller.ejs",
+  "typings": "dist/types/react-data-scroller.d.ts",
   "types": "./lib/index.d.ts",
   "author": "Ben Budnevich",
   "license": "MIT",
+  "scripts": {
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook",
+    "clean": "rm -rf dist",
+    "build": "yarn clean && yarn rollup -c rollup.config.js",
+    "lint": "yarn tslint -p ."
+  },
   "devDependencies": {
     "@babel/core": "^7.3.4",
     "@storybook/addon-actions": "^5.0.1",
@@ -29,6 +38,9 @@
     "react-docgen-typescript-loader": "^3.0.1",
     "react-docgen-typescript-webpack-plugin": "^1.1.0",
     "react-dom": "^16.8.4",
+    "rollup": "^1.6.0",
+    "rollup-plugin-postcss": "^2.0.3",
+    "rollup-plugin-typescript2": "^0.20.1",
     "ts-jest": "^24.0.0",
     "tslint": "^5.13.1",
     "tslint-config-prettier": "^1.18.0",
@@ -40,9 +52,5 @@
     "react": "^16.8.4",
     "react-dom": "^16.8.4"
   },
-  "dependencies": {},
-  "scripts": {
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
-  }
+  "dependencies": {}
 }
