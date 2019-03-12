@@ -1,0 +1,9 @@
+.sticky {
+  position: -webkit-sticky;
+  position: sticky;
+}
+
+.scroll {
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
