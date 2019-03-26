@@ -40,6 +40,7 @@ export type DataTableProps = {
   rowGetter: (arg: RowGetterArgs) => any;
   rowCount: number;
   rowHeight: number;
+  rowRenderer: React.FC<Row>;
   headerHeight: number;
   height: number;
   onRowsRendered: (arg: OnRowsRenderedArgs) => void;
@@ -55,3 +56,7 @@ export type DataTableState = {
   frozenColumnsWidth: number;
 };
 
+export type Row = {
+  rowHeight: number;
+  children: ReactNode;
+};

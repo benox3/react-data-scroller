@@ -1,5 +1,9 @@
 /* Dependencies */
-import React, {Component, ReactNode, UIEvent} from 'react';
+import React, { Component, ReactNode, UIEvent } from "react";
+import Headers from "./components/Headers";
+import defaultRowRenderer from "./components/Row";
+import Rows from "./components/Rows";
+import { Row } from "./types";
 
 /* Types */
 import {
@@ -9,11 +13,11 @@ import {
   DataTableState,
   HeaderRendererArgs,
   OnRowsRenderedArgs,
-  RowGetterArgs,
-} from './types';
+  RowGetterArgs
+} from "./types";
 
 /* Styles */
-import './styles.css';
+import "./styles.css";
 
 export default class DataScroller extends React.Component<
   DataTableProps,
@@ -22,6 +26,7 @@ export default class DataScroller extends React.Component<
   public static defaultProps = {
     frozenColumns: [],
     onRowsRendered: ({}) => undefined,
+    rowRenderer: defaultRowRenderer
   };
 
   public static getDerivedStateFromProps(props: DataTableProps) {
@@ -32,22 +37,22 @@ export default class DataScroller extends React.Component<
 
     const tableScrollWidth = props.columns.reduce(
       (width, column) => width + column.width,
-      0,
+      0
     );
     const frozenColumnsWidth = props.frozenColumns.reduce(
       (width, column) => width + column.width,
-      0,
+      0
     );
 
     const totalVisibleRows = Math.floor(
-      (props.height - props.headerHeight) / props.rowHeight,
+      (props.height - props.headerHeight) / props.rowHeight
     );
 
     return {
       frozenColumnsWidth,
       tableScrollHeight,
       tableScrollWidth,
-      totalVisibleRows,
+      totalVisibleRows
     };
   }
   public tableScroller = React.createRef<HTMLDivElement>();
@@ -60,27 +65,27 @@ export default class DataScroller extends React.Component<
       tableScrollHeight: 0,
       tableScrollWidth: 0,
       topRowIndex: 0,
-      totalVisibleRows: 0,
+      totalVisibleRows: 0
     };
 
     this.tableScroller = React.createRef();
   }
 
   public componentDidMount() {
-      this.props.onRowsRendered({
-        overscanStartIndex: this.state.topRowIndex,
-        overscanStopIndex: this.state.topRowIndex + this.state.totalVisibleRows,
-        startIndex: this.state.topRowIndex,
-        stopIndex: this.state.topRowIndex + this.state.totalVisibleRows,
-      });
+    this.props.onRowsRendered({
+      overscanStartIndex: this.state.topRowIndex,
+      overscanStopIndex: this.state.topRowIndex + this.state.totalVisibleRows,
+      startIndex: this.state.topRowIndex,
+      stopIndex: this.state.topRowIndex + this.state.totalVisibleRows
+    });
   }
   public componentDidUpdate() {
-      this.props.onRowsRendered({
-        overscanStartIndex: this.state.topRowIndex,
-        overscanStopIndex: this.state.topRowIndex + this.state.totalVisibleRows,
-        startIndex: this.state.topRowIndex,
-        stopIndex: this.state.topRowIndex + this.state.totalVisibleRows,
-      });
+    this.props.onRowsRendered({
+      overscanStartIndex: this.state.topRowIndex,
+      overscanStopIndex: this.state.topRowIndex + this.state.totalVisibleRows,
+      startIndex: this.state.topRowIndex,
+      stopIndex: this.state.topRowIndex + this.state.totalVisibleRows
+    });
   }
 
   public handleScroll = (e: UIEvent<HTMLDivElement>) => {
@@ -90,7 +95,7 @@ export default class DataScroller extends React.Component<
     const newTopRowIndex = Math.round(scrollPosition / this.props.rowHeight);
 
     this.setState({
-      topRowIndex: newTopRowIndex,
+      topRowIndex: newTopRowIndex
     });
   };
 
@@ -103,68 +108,50 @@ export default class DataScroller extends React.Component<
       i < this.state.topRowIndex + this.state.totalVisibleRows;
       i++
     ) {
-      rows.push(this.props.rowGetter({index: i}));
+      rows.push(this.props.rowGetter({ index: i }));
     }
+
+    const RowRenderer = this.props.rowRenderer;
 
     return (
       <div
         ref={this.tableScroller}
-        style={{height: this.props.height, overflowY: 'auto'}}
+        style={{ height: this.props.height, overflowY: "auto" }}
         onScroll={this.handleScroll}
-        className="scroll">
+        className="scroll"
+      >
         <div
-          style={{height: this.state.tableScrollHeight, position: 'relative'}}>
+          style={{ height: this.state.tableScrollHeight, position: "relative" }}
+        >
           <div
             className="sticky"
             style={{
-              display: 'flex',
-              fontSize: '20px',
-              top: 0,
-            }}>
+              display: "flex",
+              fontSize: "20px",
+              top: 0
+            }}
+          >
             {/* Frozen */}
             <div
               style={{
                 height: this.props.height,
-                overflowX: 'scroll',
-                overflowY: 'hidden',
-                width: this.state.frozenColumnsWidth,
-              }}>
-              <div style={{width: this.state.frozenColumnsWidth}}>
-                {/*Headers*/}
-                <div style={{display: 'flex', height: this.props.headerHeight}}>
-                  {this.props.frozenColumns.map(column => (
-                    <div style={{width: column.width}}>
-                      {(column.headerRenderer &&
-                        column.headerRenderer(column)) || <div />}
-                    </div>
-                  ))}
-                </div>
-
-                {/*Rows*/}
-                <div>
-                  {rows.map((row = {}, rowIndex) => (
-                    <div
-                      key={rowIndex}
-                      style={{display: 'flex', height: this.props.rowHeight}}>
-                      {this.props.frozenColumns.map((column, index) => (
-                        <div style={{width: column.width}}>
-                          {column.cellRenderer ? (
-                            column.cellRenderer({
-                              cellData: row[column.dataKey],
-                              columnData: column.columnData,
-                              columnIndex: index,
-                              dataKey: column.dataKey,
-                              rowData: row,
-                              rowIndex: rowIndex + this.state.topRowIndex,
-                            })
-                          ) : (
-                            <div>{row[column.dataKey]}</div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  ))}
-                </div>
+                overflowX: "scroll",
+                overflowY: "hidden",
+                width: this.state.frozenColumnsWidth
+              }}
+            >
+              <div style={{ width: this.state.frozenColumnsWidth }}>
+                <Headers
+                  columns={this.props.frozenColumns}
+                  headerHeight={this.props.headerHeight}
+                />
+                <Rows
+                  rows={rows}
+                  columns={this.props.frozenColumns}
+                  topRowIndex={this.state.topRowIndex}
+                  rowHeight={this.props.rowHeight}
+                  rowRenderer={this.props.rowRenderer}
+                />
               </div>
             </div>
 
@@ -173,56 +160,22 @@ export default class DataScroller extends React.Component<
               style={{
                 flex: 1,
                 height: this.props.height,
-                overflowX: 'auto',
-                overflowY: 'hidden',
-              }}>
-              <div style={{width: regularColumnsWidth}}>
-                {/*Headers*/}
-                <div style={{display: 'flex', height: this.props.headerHeight}}>
-                  {this.props.columns.map(
-                    ({
-                      columnData,
-                      dataKey,
-                      headerRenderer,
-                      width,
-                      label,
-                    }: Column) => (
-                      <div style={{width}}>
-                        {headerRenderer &&
-                          headerRenderer({columnData, dataKey, label})}
-                      </div>
-                    ),
-                  )}
-                </div>
-
-                {/*Rows*/}
-                <div
-                  style={{
-                    height: this.props.height - this.props.headerHeight,
-                  }}>
-                  {rows.map((row = {}, rowIndex) => (
-                    <div
-                      key={rowIndex}
-                      style={{display: 'flex', height: this.props.rowHeight}}>
-                      {this.props.columns.map((column, index) => (
-                        <div style={{width: column.width}}>
-                          {column.cellRenderer ? (
-                            column.cellRenderer({
-                              cellData: row[column.dataKey],
-                              columnData: column.columnData,
-                              columnIndex: index,
-                              dataKey: column.dataKey,
-                              rowData: row,
-                              rowIndex: rowIndex + this.state.topRowIndex,
-                            })
-                          ) : (
-                            <div>{row[column.dataKey]}</div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  ))}
-                </div>
+                overflowX: "auto",
+                overflowY: "hidden"
+              }}
+            >
+              <div style={{ width: regularColumnsWidth }}>
+                <Headers
+                  columns={this.props.columns}
+                  headerHeight={this.props.headerHeight}
+                />
+                <Rows
+                  rows={rows}
+                  columns={this.props.columns}
+                  topRowIndex={this.state.topRowIndex}
+                  rowHeight={this.props.rowHeight}
+                  rowRenderer={this.props.rowRenderer}
+                />
               </div>
             </div>
           </div>
