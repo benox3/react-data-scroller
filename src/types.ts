@@ -43,6 +43,7 @@ export type DataTableProps = {
   rowRenderer: React.FC<Row>;
   headerHeight: number;
   height: number;
+  initialTopRowIndex: number;
   onRowsRendered: (arg: OnRowsRenderedArgs) => void;
   width: number;
 }
