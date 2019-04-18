@@ -1,7 +1,5 @@
 /* Dependencies */
 import React, {
-  Component,
-  ReactNode,
   UIEvent,
   useEffect,
   useRef,
@@ -10,17 +8,10 @@ import React, {
 import Headers from './components/Headers';
 import defaultRowRenderer from './components/Row';
 import Rows from './components/Rows';
-import {Row} from './types';
 
 /* Types */
 import {
-  CellRendererArgs,
-  Column,
   DataTableProps,
-  DataTableState,
-  HeaderRendererArgs,
-  OnRowsRenderedArgs,
-  RowGetterArgs,
 } from './types';
 
 /* Styles */
@@ -61,15 +52,16 @@ export default function DataScroller(props: DataTableProps) {
     rows.push(props.rowGetter({index: i}));
   }
 
-  const RowRenderer = props.rowRenderer;
-
   return (
     <div
       ref={tableScrollerRef}
       style={{height: props.height, overflowY: 'auto'}}
       onScroll={handleScroll}
+      data-testid='scroll-container'
       className="scroll">
-      <div style={{height: tableScrollHeight, position: 'relative'}}>
+      <div
+        style={{height: tableScrollHeight, position: 'relative'}}
+      >
         <div
           className="sticky"
           style={{

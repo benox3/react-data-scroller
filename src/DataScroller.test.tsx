@@ -1,13 +1,14 @@
 import * as faker from 'faker';
-import * as React from 'react';
+import React from 'react';
+import {act, fireEvent, render} from 'react-testing-library';
+import DataScroller from './DataScroller';
 
-import {storiesOf} from '@storybook/react';
-import DataScroller, {
+import {
   CellRendererArgs,
   Column,
   HeaderRendererArgs,
   RowGetterArgs,
-} from '../src';
+} from './types';
 
 const initialColumns = [
   {
@@ -29,7 +30,7 @@ const initialColumns = [
     ),
     label: 'last name',
     width: 200,
-      },
+  },
   {
     cellRenderer: ({rowData}: CellRendererArgs) => {
       return <div>{rowData.firstName}</div>;
@@ -46,7 +47,7 @@ const initialColumns = [
 
 const generateRows = (n: number) => {
   const arr = Array.apply(null, Array(n));
-  return arr.map((item, index) => {
+  return arr.map((item: any, index: number) => {
     return {
       avatar: faker.image.imageUrl(100, 100, 'people'),
       firstName: faker.name.firstName(),
@@ -80,15 +81,48 @@ frozenColumns = frozenColumns.map((column, index) => ({
   columnData: {...(column.columnData || {}), columnIndex: index},
 }));
 
-storiesOf('react-data-scroller', module).add('default', () => (
-  <DataScroller
-    rowCount={rowCount}
-    rowGetter={rowGetter}
-    rowHeight={50}
-    height={500}
-    headerHeight={100}
-    width={500}
-    columns={columns}
-    frozenColumns={frozenColumns}
-  />
-));
+describe('DataScroller', () => {
+  it('renders only one row', () => {
+    const {container} = render(
+      <DataScroller
+        rowCount={rowCount}
+        rowGetter={rowGetter}
+        rowHeight={100}
+        height={100}
+        headerHeight={0}
+        width={500}
+        columns={columns}
+        frozenColumns={frozenColumns}
+      />,
+    );
+
+    expect(container.textContent).toMatch(rows[0].firstName);
+    expect(container.textContent).not.toMatch(rows[1].firstName);
+  });
+
+  it('loads one additional row when scrolling', () => {
+    const {container, debug, getByTestId} = render(
+      <DataScroller
+        rowCount={rowCount}
+        rowGetter={rowGetter}
+        rowHeight={100}
+        height={100}
+        headerHeight={0}
+        width={500}
+        columns={columns}
+        frozenColumns={frozenColumns}
+      />,
+    );
+
+    const scrollContainer = getByTestId('scroll-container');
+
+    act(() => {
+      scrollContainer.scrollTop = 50;
+      fireEvent.scroll(scrollContainer);
+    });
+
+    expect(scrollContainer.textContent).toMatch(rows[1].firstName);
+    expect(scrollContainer.textContent).not.toMatch(rows[0].firstName);
+    expect(scrollContainer.textContent).not.toMatch(rows[2].firstName);
+  });
+});

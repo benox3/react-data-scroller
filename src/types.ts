@@ -1,4 +1,4 @@
-import { ReactNode, UIEvent } from "react";
+import { ReactNode } from "react";
 
 export type CellRendererArgs = {
   cellData: any;

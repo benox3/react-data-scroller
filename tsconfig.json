@@ -9,14 +9,13 @@
     "outDir": "./dist/lib",
     "strict": true,
     "jsx": "react",
-    "plugins": [
-      { "name": "typescript-tslint-plugin" }
-    ],
-    "typeRoots": ["types"],
+    "plugins": [{"name": "typescript-tslint-plugin"}],
+    "typeRoots": ["node_modules/@types"],
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true
   },
-  "include": [
-    "src"
-  ]
+  "awesomeTypescriptLoaderOptions": {
+    "typeRoots": ["types"]
+  },
+  "include": ["src"]
 }
