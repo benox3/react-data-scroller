@@ -1,18 +1,11 @@
 /* Dependencies */
-import React, {
-  UIEvent,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, {UIEvent, useEffect, useRef, useState} from 'react';
 import Headers from './components/Headers';
 import defaultRowRenderer from './components/Row';
 import Rows from './components/Rows';
 
 /* Types */
-import {
-  DataTableProps,
-} from './types';
+import {DataTableProps} from './types';
 
 /* Styles */
 import './styles.css';
@@ -40,7 +33,7 @@ export default function DataScroller(props: DataTableProps) {
     const scrollPosition = tableScrollerRef.current
       ? tableScrollerRef.current.scrollTop
       : 0;
-    const newTopRowIndex = Math.round(scrollPosition / props.rowHeight);
+    const newTopRowIndex = Math.floor(scrollPosition / props.rowHeight);
 
     setTopRowIndex(newTopRowIndex);
   };
@@ -48,7 +41,11 @@ export default function DataScroller(props: DataTableProps) {
   const regularColumnsWidth = tableScrollWidth;
   const rows = [];
 
-  for (let i = topRowIndex; i < topRowIndex + totalVisibleRows && i < props.rowCount; i++) {
+  for (
+    let i = topRowIndex;
+    i < topRowIndex + totalVisibleRows && i < props.rowCount;
+    i++
+  ) {
     rows.push(props.rowGetter({index: i}));
   }
 
@@ -57,11 +54,9 @@ export default function DataScroller(props: DataTableProps) {
       ref={tableScrollerRef}
       style={{height: props.height, overflowY: 'auto'}}
       onScroll={handleScroll}
-      data-testid='scroll-container'
+      data-testid="scroll-container"
       className="scroll">
-      <div
-        style={{height: tableScrollHeight, position: 'relative'}}
-      >
+      <div style={{height: tableScrollHeight, position: 'relative'}}>
         <div
           className="sticky"
           style={{
@@ -125,11 +120,8 @@ const useTableScrollDimensions = (props: DataTableProps) => {
   const [tableScrollWidth, setTableScrollWidth] = useState(0);
   const [frozenColumnsScrollWidth, setFrozenColumnsScrollWidth] = useState(0);
   useEffect(() => {
-    let newTableScrollHeight = 0;
-    for (let i = 0; i < props.rowCount; i++) {
-      newTableScrollHeight += props.rowHeight;
-    }
-
+    const newTableScrollHeight =
+      (props.rowCount + 1) * props.rowHeight + props.headerHeight;
     setTableScrollHeight(newTableScrollHeight);
   }, [props.rowHeight]);
 
@@ -159,9 +151,12 @@ const useTableScrollDimensions = (props: DataTableProps) => {
 const useTotalVisibleRows = (props: DataTableProps) => {
   const [totalVisibleRows, setTotalVisibleRows] = useState(0);
   useEffect(() => {
-    const newTotalVisibleRows = Math.floor(
-      (props.height - props.headerHeight) / props.rowHeight,
-    );
+    const totalRowsThatFit =
+      (props.height - props.headerHeight) / props.rowHeight;
+    const isLastRowCutOff = totalRowsThatFit % 1 !== 0;
+    const newTotalVisibleRows = isLastRowCutOff
+      ? Math.floor(totalRowsThatFit) + 1
+      : Math.floor(totalRowsThatFit);
     setTotalVisibleRows(newTotalVisibleRows);
   }, [props.height, props.headerHeight, props.rowHeight]);
   return totalVisibleRows;
