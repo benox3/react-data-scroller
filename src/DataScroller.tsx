@@ -48,7 +48,7 @@ export default function DataScroller(props: DataTableProps) {
   const regularColumnsWidth = tableScrollWidth;
   const rows = [];
 
-  for (let i = topRowIndex; i < topRowIndex + totalVisibleRows; i++) {
+  for (let i = topRowIndex; i < topRowIndex + totalVisibleRows && i < props.rowCount; i++) {
     rows.push(props.rowGetter({index: i}));
   }
 
