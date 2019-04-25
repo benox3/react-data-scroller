@@ -2,8 +2,8 @@
   "name": "react-data-scroller",
   "version": "0.0.1",
   "description": "react component for scrolling large amounts of data efficiently",
-  "main": "./dist/react-data-scroller.js",
-  "module": "./dist/react-data-scroller.ejs",
+  "main": "dist/react-data-scroller.js",
+  "module": "dist/react-data-scroller.ejs",
   "typings": "dist/types/react-data-scroller.d.ts",
   "types": "./lib/index.d.ts",
   "author": "Ben Budnevich",
@@ -14,7 +14,9 @@
     "clean": "rm -rf dist",
     "build": "yarn clean && yarn rollup -c rollup.config.js",
     "lint": "yarn tslint -p .",
-    "test": "jest"
+    "test": "jest",
+    "prebuild": "yarn lint && yarn test",
+    "prepublish": "yarn build"
   },
   "devDependencies": {
     "@babel/core": "^7.3.4",
