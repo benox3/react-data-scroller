@@ -123,7 +123,7 @@ const useTableScrollDimensions = (props: DataTableProps) => {
     const newTableScrollHeight =
       (props.rowCount + 1) * props.rowHeight + props.headerHeight;
     setTableScrollHeight(newTableScrollHeight);
-  }, [props.rowHeight]);
+  }, [props.rowHeight, props.rowCount]);
 
   useEffect(() => {
     const newTableScrollWidth = props.columns.reduce(
