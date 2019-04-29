@@ -1,5 +1,7 @@
 import * as faker from 'faker';
 import * as React from 'react';
+import ColumnComp from '../src/Column';
+import Group from '../src/components/Group';
 
 import {storiesOf} from '@storybook/react';
 import DataScroller, {
@@ -29,7 +31,7 @@ const initialColumns = [
     ),
     label: 'last name',
     width: 200,
-      },
+  },
   {
     cellRenderer: ({rowData}: CellRendererArgs) => {
       return <div>{rowData.firstName}</div>;
@@ -80,6 +82,18 @@ frozenColumns = frozenColumns.map((column, index) => ({
   columnData: {...(column.columnData || {}), columnIndex: index},
 }));
 
+const GroupHeaderA = (props: {width: number}) => {
+  return (
+    <div style={{backgroundColor: 'blue', width: props.width}}>First Group</div>
+  );
+};
+
+const GroupHeaderB = (props: {width: number}) => {
+  return (
+    <div style={{backgroundColor: 'red', width: props.width}}>Second Group</div>
+  );
+};
+
 storiesOf('react-data-scroller', module).add('default', () => (
   <DataScroller
     rowCount={rowCount}
@@ -88,7 +102,28 @@ storiesOf('react-data-scroller', module).add('default', () => (
     height={500}
     headerHeight={100}
     width={500}
-    columns={columns}
-    frozenColumns={frozenColumns}
+    groupHeaderHeight={30}
+    // @ts-ignore
+    columns={
+      <>
+        <Group headerRenderer={GroupHeaderA}>
+          {columns.map(column => (
+            // @ts-ignore
+            <ColumnComp {...column} />
+          ))}
+        </Group>
+        <Group headerRenderer={GroupHeaderB}>
+          {columns.map(column => (
+            // @ts-ignore
+            <ColumnComp {...column} />
+          ))}
+        </Group>
+      </>
+    }
+    // @ts-ignore
+    frozenColumns={frozenColumns.map(column => (
+    // @ts-ignore
+      <ColumnComp {...column} />
+    ))}
   />
 ));

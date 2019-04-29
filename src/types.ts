@@ -39,14 +39,15 @@ export type RowGetter = (arg: RowGetterArgs) => any;
 export type DataTableProps = {
   columns: Column[];
   frozenColumns: Column[];
-  rowGetter: RowGetter;
-  rowCount: number;
-  rowHeight: number;
-  rowRenderer: React.FC<Row>;
+  groupHeaderHeight: number;
   headerHeight: number;
   height: number;
   initialTopRowIndex: number;
   onRowsRendered: (arg: OnRowsRenderedArgs) => void;
+  rowCount: number;
+  rowGetter: RowGetter;
+  rowHeight: number;
+  rowRenderer: React.FC<Row>;
   width: number;
 }
 
