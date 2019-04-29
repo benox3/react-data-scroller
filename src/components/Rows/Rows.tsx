@@ -1,44 +1,59 @@
-import React from "react";
-import { Column, Row } from "../../types";
+import React from 'react';
+import {Column, Row, RowGetter} from '../../types';
 
 export type Props = {
-  rows: any[];
   columns: Column[];
   topRowIndex: number;
   rowHeight: number;
   rowRenderer: React.FC<Row>;
+  totalVisibleRows: number;
+  rowGetter: RowGetter;
+  rowCount: number;
 };
 
-export default function({
-  rows,
+function Rows({
   columns,
   topRowIndex,
   rowHeight,
-  rowRenderer
+  rowRenderer,
+  totalVisibleRows,
+  rowGetter,
+  rowCount,
 }: Props) {
   const RowRenderer = rowRenderer;
+
   return (
     <div>
-      {rows.map((row = {}, rowIndex) => (
-        <RowRenderer rowHeight={rowHeight} key={rowIndex}>
-          {columns.map((column, index) => (
-            <div key={index} style={{ width: column.width }}>
-              {column.cellRenderer ? (
-                column.cellRenderer({
-                  cellData: row[column.dataKey],
-                  columnData: column.columnData,
-                  columnIndex: index,
-                  dataKey: column.dataKey,
-                  rowData: row,
-                  rowIndex: rowIndex + topRowIndex
-                })
-              ) : (
-                <div>{row[column.dataKey]}</div>
-              )}
-            </div>
-          ))}
-        </RowRenderer>
-      ))}
+      {Array.apply(null, new Array(totalVisibleRows)).map((_, index) => {
+        const rowIndex = topRowIndex + index;
+        const row = rowGetter({index: rowIndex});
+        if (rowIndex > rowCount - 1) {
+          return null;
+        }
+
+        return (
+        <RowRenderer rowHeight={rowHeight} key={index}>
+            {columns.map((column, columnIndex) => (
+              <div key={columnIndex} style={{width: column.width}}>
+                {column.cellRenderer ? (
+                  column.cellRenderer({
+                    cellData: row[column.dataKey],
+                    columnData: column.columnData,
+                    columnIndex,
+                    dataKey: column.dataKey,
+                    rowData: row,
+                    rowIndex,
+                  })
+                ) : (
+                  <div>{row[column.dataKey]}</div>
+                )}
+              </div>
+            ))}
+          </RowRenderer>
+        );
+      })}
     </div>
   );
 }
+
+export default React.memo(Rows);

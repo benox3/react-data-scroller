@@ -23,9 +23,6 @@ export type Column = {
   label: any;
 }
 
-export type RowGetterArgs = {
-  index: number;
-}
 
 export type OnRowsRenderedArgs = {
   startIndex: number;
@@ -34,10 +31,15 @@ export type OnRowsRenderedArgs = {
   stopIndex: number;
 }
 
+export type RowGetterArgs = {
+  index: number;
+}
+export type RowGetter = (arg: RowGetterArgs) => any;
+
 export type DataTableProps = {
   columns: Column[];
   frozenColumns: Column[];
-  rowGetter: (arg: RowGetterArgs) => any;
+  rowGetter: RowGetter;
   rowCount: number;
   rowHeight: number;
   rowRenderer: React.FC<Row>;

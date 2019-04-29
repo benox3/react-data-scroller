@@ -10,7 +10,7 @@ import {DataTableProps} from './types';
 /* Styles */
 import './styles.css';
 
-export default function DataScroller(props: DataTableProps) {
+const  DataScroller = (props: DataTableProps) => {
   const tableScrollerRef = useRef<HTMLDivElement>(null);
   const [topRowIndex, setTopRowIndex] = useState(props.initialTopRowIndex);
   const totalVisibleRows = useTotalVisibleRows(props);
@@ -39,15 +39,6 @@ export default function DataScroller(props: DataTableProps) {
   };
 
   const regularColumnsWidth = tableScrollWidth;
-  const rows = [];
-
-  for (
-    let i = topRowIndex;
-    i < topRowIndex + totalVisibleRows && i < props.rowCount;
-    i++
-  ) {
-    rows.push(props.rowGetter({index: i}));
-  }
 
   return (
     <div
@@ -78,11 +69,13 @@ export default function DataScroller(props: DataTableProps) {
                 headerHeight={props.headerHeight}
               />
               <Rows
-                rows={rows}
+                rowGetter={props.rowGetter}
+                totalVisibleRows={totalVisibleRows}
                 columns={props.frozenColumns}
                 topRowIndex={topRowIndex}
                 rowHeight={props.rowHeight}
                 rowRenderer={props.rowRenderer}
+                rowCount={props.rowCount}
               />
             </div>
           </div>
@@ -101,11 +94,13 @@ export default function DataScroller(props: DataTableProps) {
                 headerHeight={props.headerHeight}
               />
               <Rows
-                rows={rows}
+                rowGetter={props.rowGetter}
+                totalVisibleRows={totalVisibleRows}
                 columns={props.columns}
                 topRowIndex={topRowIndex}
                 rowHeight={props.rowHeight}
                 rowRenderer={props.rowRenderer}
+                rowCount={props.rowCount}
               />
             </div>
           </div>
@@ -159,6 +154,7 @@ const useTotalVisibleRows = (props: DataTableProps) => {
       : Math.floor(totalRowsThatFit);
     setTotalVisibleRows(newTotalVisibleRows);
   }, [props.height, props.headerHeight, props.rowHeight]);
+
   return totalVisibleRows;
 };
 
@@ -168,3 +164,5 @@ DataScroller.defaultProps = {
   onRowsRendered: ({}) => undefined,
   rowRenderer: defaultRowRenderer,
 };
+
+export default React.memo(DataScroller);
