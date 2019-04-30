@@ -1,6 +1,6 @@
 /* Dependencies */
-import React, {UIEvent, useEffect, useRef, useState} from 'react';
-import {Group} from './';
+import React, {UIEvent, useEffect, useMemo, useRef, useState} from 'react';
+import Group from './components/Group';
 import Headers from './components/Headers';
 import defaultRowRenderer from './components/Row';
 import Rows from './components/Rows';
@@ -163,29 +163,26 @@ const DataScroller = (props: DataTableProps) => {
 };
 
 const useTableScrollDimensions = (props: DataTableProps) => {
-  const [tableScrollHeight, setTableScrollHeight] = useState(0);
-  const [tableScrollWidth, setTableScrollWidth] = useState(0);
-  const [frozenColumnsScrollWidth, setFrozenColumnsScrollWidth] = useState(0);
-  useEffect(() => {
+  const tableScrollHeight = useMemo(() => {
     const newTableScrollHeight =
       (props.rowCount + 1) * props.rowHeight + props.headerHeight + props.groupHeaderHeight;
-    setTableScrollHeight(newTableScrollHeight);
+    return (newTableScrollHeight);
   }, [props.rowHeight, props.rowCount]);
 
-  useEffect(() => {
+  const tableScrollWidth = useMemo(() => {
     const newTableScrollWidth = getColumns(props.columns).reduce(
       (width, column) => width + column.width,
       0,
     );
-    setTableScrollWidth(newTableScrollWidth);
+    return (newTableScrollWidth);
   }, [props.columns]);
 
-  useEffect(() => {
+  const frozenColumnsScrollWidth = useMemo(() => {
     const newFrozenColumnsScrollWidth = getColumns(props.frozenColumns).reduce(
       (width, column) => width + column.width,
       0,
     );
-    setFrozenColumnsScrollWidth(newFrozenColumnsScrollWidth);
+    return (newFrozenColumnsScrollWidth);
   }, [props.frozenColumns]);
 
   return {
@@ -196,15 +193,14 @@ const useTableScrollDimensions = (props: DataTableProps) => {
 };
 
 const useTotalVisibleRows = (props: DataTableProps) => {
-  const [totalVisibleRows, setTotalVisibleRows] = useState(0);
-  useEffect(() => {
+  const totalVisibleRows = useMemo(() => {
     const totalRowsThatFit =
       (props.height - props.headerHeight - props.groupHeaderHeight) / props.rowHeight;
     const isLastRowCutOff = totalRowsThatFit % 1 !== 0;
     const newTotalVisibleRows = isLastRowCutOff
       ? Math.floor(totalRowsThatFit) + 1
       : Math.floor(totalRowsThatFit);
-    setTotalVisibleRows(newTotalVisibleRows);
+   return (newTotalVisibleRows);
   }, [props.height, props.headerHeight, props.groupHeaderHeight, props.rowHeight]);
 
   return totalVisibleRows;
