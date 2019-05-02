@@ -12,14 +12,25 @@ import {Column, DataTableProps} from './types';
 import './styles.css';
 
 const getColumns = (nodes: React.ReactNode): Column[] => {
-  return React.Children.toArray(nodes).reduce((columns: Column[], node:any) => {
-    if (node.type === React.Fragment || node.type.displayName === 'Group' || node.type === Group || typeof node.type === 'function' && node.type.prototype instanceof Group) {
-      return [...columns, ...getColumns(node.props.children)];
-    }
+  return React.Children.toArray(nodes).reduce(
+    (columns: Column[], node: any) => {
+      if (
+        node.type === React.Fragment ||
+        node.type.displayName === 'Group' ||
+        node.type === Group ||
+        (typeof node.type === 'function' &&
+          node.type.prototype instanceof Group)
+      ) {
+        return [...columns, ...getColumns(node.props.children)];
+      }
 
-    if (!node.props) { return [...columns] }
-    return [...columns, node.props];
-  }, []);
+      if (!node.props) {
+        return [...columns];
+      }
+      return [...columns, node.props];
+    },
+    [],
+  );
 };
 
 const getGroups = (nodes: React.ReactNode = []): any[] => {
@@ -27,7 +38,11 @@ const getGroups = (nodes: React.ReactNode = []): any[] => {
     if (node.type === React.Fragment && node.props.children) {
       return [...groups, ...getGroups(node.props.children)];
     }
-    if (node.type.displayName === 'Group' || node.type === Group || typeof node.type === 'function' && node.type.prototype instanceof Group) {
+    if (
+      node.type.displayName === 'Group' ||
+      node.type === Group ||
+      (typeof node.type === 'function' && node.type.prototype instanceof Group)
+    ) {
       if (!node.props) {
         return [...groups];
       }
@@ -66,6 +81,46 @@ const DataScroller = (props: DataTableProps) => {
     setTopRowIndex(newTopRowIndex);
   };
 
+  const frozenGroupHeaders = useMemo(() =>
+    getGroups(props.frozenColumns).map(group => {
+      const groupHeaderWidth = group.children.reduce(
+        (width: number, child: any) => width + child.props.width,
+        0,
+      );
+
+      const groupProps = {
+        columns: group.children.map((child: any) => child.props),
+        groupData: group.groupData,
+        width: groupHeaderWidth,
+      };
+      const GroupHeader = group.headerRenderer;
+
+      return <GroupHeader {...groupProps} />;
+    }),
+    [props.frozenColumns]
+  );
+
+  const groupHeaders = useMemo(() =>
+    getGroups(props.columns).map(group => {
+      const groupHeaderWidth = group.children.reduce(
+        (width: number, child: any) => width + child.props.width,
+        0,
+      );
+
+      const groupProps = {
+        columns: group.children.map((child: any) => child.props),
+        groupData: group.groupData,
+        width: groupHeaderWidth,
+      };
+      const GroupHeader = group.headerRenderer;
+
+      return <GroupHeader {...groupProps} />;
+    }),
+    [props.columns]
+  );
+  const columns= useMemo(() => getColumns(props.columns), [props.columns])
+  const frozenColumns= useMemo(() => getColumns(props.frozenColumns), [props.frozenColumns])
+
   const regularColumnsWidth = tableScrollWidth;
   return (
     <div
@@ -92,23 +147,16 @@ const DataScroller = (props: DataTableProps) => {
             }}>
             <div style={{width: frozenColumnsScrollWidth}}>
               <div style={{display: 'flex', height: props.groupHeaderHeight}}>
-                {getGroups(props.frozenColumns).map(group => {
-                  const groupHeaderWidth = group.children.reduce(
-                    (width: number, child: any) => width + child.props.width,
-                    0,
-                  );
-
-                  return group.headerRenderer({width: groupHeaderWidth});
-                })}
+                {frozenGroupHeaders}
               </div>
               <Headers
-                columns={getColumns(props.frozenColumns)}
+                columns={frozenColumns}
                 headerHeight={props.headerHeight}
               />
               <Rows
                 rowGetter={props.rowGetter}
                 totalVisibleRows={totalVisibleRows}
-                columns={getColumns(props.frozenColumns)}
+                columns={frozenColumns}
                 topRowIndex={topRowIndex}
                 rowHeight={props.rowHeight}
                 rowRenderer={props.rowRenderer}
@@ -127,28 +175,16 @@ const DataScroller = (props: DataTableProps) => {
             }}>
             <div style={{width: regularColumnsWidth}}>
               <div style={{display: 'flex', height: props.groupHeaderHeight}}>
-                {getGroups(props.columns).map(group => {
-                  const groupHeaderWidth = group.children.reduce(
-                    (width: number, child: any) => width + child.props.width,
-                    0,
-                  );
-
-                  const groupProps = {
-                    columns: group.children.map((child: any) => child.props),
-                    width: groupHeaderWidth,
-                  };
-
-                  return group.headerRenderer(groupProps);
-                })}
+                {groupHeaders}
               </div>
               <Headers
-                columns={getColumns(props.columns)}
+                columns={columns}
                 headerHeight={props.headerHeight}
               />
               <Rows
                 rowGetter={props.rowGetter}
                 totalVisibleRows={totalVisibleRows}
-                columns={getColumns(props.columns)}
+                columns={columns}
                 topRowIndex={topRowIndex}
                 rowHeight={props.rowHeight}
                 rowRenderer={props.rowRenderer}
@@ -165,8 +201,10 @@ const DataScroller = (props: DataTableProps) => {
 const useTableScrollDimensions = (props: DataTableProps) => {
   const tableScrollHeight = useMemo(() => {
     const newTableScrollHeight =
-      (props.rowCount + 1) * props.rowHeight + props.headerHeight + props.groupHeaderHeight;
-    return (newTableScrollHeight);
+      (props.rowCount + 1) * props.rowHeight +
+      props.headerHeight +
+      props.groupHeaderHeight;
+    return newTableScrollHeight;
   }, [props.rowHeight, props.rowCount]);
 
   const tableScrollWidth = useMemo(() => {
@@ -174,7 +212,7 @@ const useTableScrollDimensions = (props: DataTableProps) => {
       (width, column) => width + column.width,
       0,
     );
-    return (newTableScrollWidth);
+    return newTableScrollWidth;
   }, [props.columns]);
 
   const frozenColumnsScrollWidth = useMemo(() => {
@@ -182,7 +220,7 @@ const useTableScrollDimensions = (props: DataTableProps) => {
       (width, column) => width + column.width,
       0,
     );
-    return (newFrozenColumnsScrollWidth);
+    return newFrozenColumnsScrollWidth;
   }, [props.frozenColumns]);
 
   return {
@@ -195,13 +233,19 @@ const useTableScrollDimensions = (props: DataTableProps) => {
 const useTotalVisibleRows = (props: DataTableProps) => {
   const totalVisibleRows = useMemo(() => {
     const totalRowsThatFit =
-      (props.height - props.headerHeight - props.groupHeaderHeight) / props.rowHeight;
+      (props.height - props.headerHeight - props.groupHeaderHeight) /
+      props.rowHeight;
     const isLastRowCutOff = totalRowsThatFit % 1 !== 0;
     const newTotalVisibleRows = isLastRowCutOff
       ? Math.floor(totalRowsThatFit) + 1
       : Math.floor(totalRowsThatFit);
-   return (newTotalVisibleRows);
-  }, [props.height, props.headerHeight, props.groupHeaderHeight, props.rowHeight]);
+    return newTotalVisibleRows;
+  }, [
+    props.height,
+    props.headerHeight,
+    props.groupHeaderHeight,
+    props.rowHeight,
+  ]);
 
   return totalVisibleRows;
 };

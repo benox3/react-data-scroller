@@ -11,19 +11,21 @@ import DataScroller, {
   RowGetterArgs,
 } from '../src';
 
+const cellRenderer = ({rowData}: CellRendererArgs) => {
+  return (
+    <div
+      className="hover"
+      style={{
+        boxShadow: '0 0 5px 2px black',
+      }}>
+      {rowData.index}
+    </div>
+  );
+};
+
 const initialColumns = [
   {
-    cellRenderer: ({rowData}: CellRendererArgs) => {
-      return (
-        <div
-          className="hover"
-          style={{
-            boxShadow: '0 0 5px 2px black',
-          }}>
-          {rowData.index}
-        </div>
-      );
-    },
+    cellRenderer,
     columnData: {},
     dataKey: 'lastName',
     headerRenderer: ({columnData}: HeaderRendererArgs) => (
@@ -122,7 +124,7 @@ storiesOf('react-data-scroller', module).add('default', () => (
     }
     // @ts-ignore
     frozenColumns={frozenColumns.map(column => (
-    // @ts-ignore
+      // @ts-ignore
       <ColumnComp {...column} />
     ))}
   />
