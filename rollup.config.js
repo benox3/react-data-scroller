@@ -1,9 +1,9 @@
 import typescript from 'rollup-plugin-typescript2';
-import postcss from 'rollup-plugin-postcss'
-import pkg from './package.json'
+import postcss from 'rollup-plugin-postcss';
+import pkg from './package.json';
 
 const isProd = process.env.BUILD === 'production';
-const getDestination = (dest) => {
+const getDestination = dest => {
   if (isProd) return dest.replace('.js', '.min.js');
   return dest;
 };
@@ -15,6 +15,7 @@ export default {
       format: 'cjs',
       file: getDestination(pkg.main),
       name: 'DataScroller',
+      exports: 'named',
     },
     {
       format: 'es',
@@ -23,9 +24,10 @@ export default {
     },
   ],
   plugins: [
-typescript({ useTsconfigDeclarationDir: true }),
+    typescript({useTsconfigDeclarationDir: true}),
     postcss({
-      plugins: []
-    })
-  ]
-}
+      plugins: [],
+    }),
+  ],
+  external: ['react']
+};
