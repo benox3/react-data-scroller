@@ -1,5 +1,5 @@
 import React from 'react';
-import {Column, Row, RowGetter} from '../../types';
+import { Column, Row, RowGetter } from '../../types';
 
 export type Props = {
   columns: Column[];
@@ -26,23 +26,23 @@ function Rows({
     <div>
       {Array.apply(null, new Array(totalVisibleRows)).map((_, index) => {
         const rowIndex = topRowIndex + index;
-        const row = rowGetter({index: rowIndex});
+        const row = rowGetter({ index: rowIndex });
         if (rowIndex > rowCount - 1) {
           return null;
         }
 
         return (
-        <RowRenderer rowHeight={rowHeight} key={index}>
+          <RowRenderer rowHeight={rowHeight} key={index}>
             {columns.map((column, columnIndex) => (
-              <div key={columnIndex} style={{width: column.width}}>
+              <div key={columnIndex} style={{ width: column.width }}>
                 {column.cellRenderer ? (
                   column.cellRenderer({
+                    columnIndex,
+                    rowIndex,
                     cellData: row[column.dataKey],
                     columnData: column.columnData,
-                    columnIndex,
                     dataKey: column.dataKey,
                     rowData: row,
-                    rowIndex,
                   })
                 ) : (
                   <div>{row[column.dataKey]}</div>

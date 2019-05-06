@@ -1,9 +1,31 @@
 {
   "defaultSeverity": "error",
-  "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
+  "extends": [
+    "tslint-config-airbnb",
+    "tslint-plugin-prettier",
+    "tslint-config-prettier",
+    "tslint-react"
+  ],
   "jsRules": {},
   "rules": {
-    "interface-over-type-literal": false
+    "align": false,
+    "array-type": [true, "array"],
+    "function-name": false,
+    "import-name": false,
+    "interface-over-type-literal": false,
+    "jsx-no-multiline-js": false,
+    "jsx-wrap-multiline": false,
+    "max-line-length": ["error", { "ignoreStrings": true }],
+    "prefer-array-literal": false,
+    "prettier": [
+      true,
+      {
+        "singleQuote": true,
+        "trailingComma": "all"
+      }
+    ],
+    "ter-arrow-parens": false,
+    "variable-name": [false, "check-format", "allow-pascal-case"]
   },
   "rulesDirectory": []
 }
