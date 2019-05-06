@@ -13,3 +13,6 @@ export type Props = {
 export default function Column(props: Props) {
   return null;
 }
+
+// Used for identifying the component type when iterating through children
+Column.__Column__ = true;

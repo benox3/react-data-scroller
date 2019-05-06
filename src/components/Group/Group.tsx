@@ -10,3 +10,6 @@ export type Props = {
 export default function Group({ children, headerRenderer, groupData }: Props) {
   return null;
 }
+
+// Used for identifying the component type when iterating through children
+Group.__Group__ = true;

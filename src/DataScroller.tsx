@@ -23,10 +23,8 @@ const getColumns = (node: React.ReactNode) => {
 
       if (
         column.props &&
-        (column.type === Column ||
-          // This is necessary for HMR
-          // @ts-ignore
-          column.type.displayName === 'Column')
+        // @ts-ignore
+        column.type.__Column__
       ) {
         return [...acc, column.props];
       }
@@ -67,10 +65,8 @@ const getColumnsAndGroups = (
       }
 
       if (
-        elementChild.type === Group ||
-        // This is necessary for HMR
         // @ts-ignore
-        elementChild.type.displayName === 'Group'
+        elementChild.type.__Group__
       ) {
         return {
           ...acc,
