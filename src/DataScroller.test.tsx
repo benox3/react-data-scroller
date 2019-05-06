@@ -1,14 +1,11 @@
 import * as faker from 'faker';
 import React from 'react';
 import { act, fireEvent, render } from 'react-testing-library';
+import Column, { Props as ColumnProps } from './components/Column';
+import Group from './components/Group';
 import DataScroller from './DataScroller';
 
-import {
-  CellRendererArgs,
-  Column,
-  HeaderRendererArgs,
-  RowGetterArgs,
-} from './types';
+import { CellRendererArgs, HeaderRendererArgs, RowGetterArgs } from './types';
 
 const initialColumns = [
   {
@@ -62,7 +59,7 @@ const rows = generateRows(rowCount);
 
 const rowGetter = ({ index }: RowGetterArgs) => rows[index];
 
-let columns: Column[] = [];
+let columns: ColumnProps[] = [];
 for (let counter = 0; counter < 10; counter += 1) {
   columns = [...initialColumns, ...(columns || [])];
 }
@@ -72,7 +69,7 @@ columns = columns.map((column, index) => ({
   columnData: { ...(column.columnData || {}), columnIndex: index },
 }));
 
-let frozenColumns: Column[] = [];
+let frozenColumns: ColumnProps[] = [];
 for (let counter = 0; counter < 2; counter += 1) {
   frozenColumns = [...initialColumns, ...(frozenColumns || [])];
 }
@@ -82,43 +79,58 @@ frozenColumns = frozenColumns.map((column, index) => ({
   columnData: { ...(column.columnData || {}), columnIndex: index },
 }));
 
-describe('DataScroller', () => {
-  it('renders only one row', () => {
-    const { container } = render(
-      <DataScroller
-        rowCount={rowCount}
-        rowGetter={rowGetter}
-        rowHeight={100}
-        height={100}
-        headerHeight={0}
-        width={500}
-        columns={columns}
-        frozenColumns={frozenColumns}
-      />,
-    );
+const GroupHeaderA = (props: { width: number }) => {
+  return (
+    <div style={{ backgroundColor: 'blue', width: props.width }}>
+      First Group
+    </div>
+  );
+};
 
+const GroupHeaderB = (props: { width: number }) => {
+  return (
+    <div style={{ backgroundColor: 'red', width: props.width }}>
+      Second Group
+    </div>
+  );
+};
+
+describe('DataScroller', () => {
+  const { container, getByTestId } = render(
+    <DataScroller
+      rowCount={rowCount}
+      rowGetter={rowGetter}
+      rowHeight={100}
+      height={100}
+      headerHeight={0}
+      width={500}
+      columns={[
+        <Group key="groupa" headerRenderer={GroupHeaderA}>
+          {columns.map((column, index) => (
+            <Column key={index} {...column} />
+          ))}
+        </Group>,
+        <Group key="groupb" headerRenderer={GroupHeaderB}>
+          {columns.map((column, index) => (
+            <Column key={index} {...column} />
+          ))}
+        </Group>,
+      ]}
+      frozenColumns={frozenColumns.map((column, index) => (
+        <Column key={index} {...column} />
+      ))}
+    />,
+  );
+  it('renders only one row', () => {
     expect(container.textContent).toMatch(rows[0].firstName);
     expect(container.textContent).not.toMatch(rows[1].firstName);
   });
 
   it('loads one additional row when scrolling', () => {
-    const { container, debug, getByTestId } = render(
-      <DataScroller
-        rowCount={rowCount}
-        rowGetter={rowGetter}
-        rowHeight={100}
-        height={100}
-        headerHeight={0}
-        width={500}
-        columns={columns}
-        frozenColumns={frozenColumns}
-      />,
-    );
-
     const scrollContainer = getByTestId('scroll-container');
 
     act(() => {
-      scrollContainer.scrollTop = 50;
+      scrollContainer.scrollTop = 100;
       fireEvent.scroll(scrollContainer);
     });
 

@@ -1,67 +1,140 @@
 /* Dependencies */
-import React, {UIEvent, useEffect, useMemo, useRef, useState} from 'react';
-import Group from './components/Group';
+import React, { UIEvent, useEffect, useMemo, useRef, useState } from 'react';
+import Column, { Props as ColumnProps } from './components/Column';
+import Group, { Props as GroupProps } from './components/Group';
 import Headers from './components/Headers';
 import defaultRowRenderer from './components/Row';
 import Rows from './components/Rows';
+import useTableScrollDimensions from './hooks/useTableScrollDimensions';
+import useTotalVisibleRows from './hooks/useTotalVisibleRows';
 
 /* Types */
-import {Column, DataTableProps} from './types';
+import { DataTableProps } from './types';
 
 /* Styles */
 import './styles.css';
 
-const getColumns = (nodes: React.ReactNode): Column[] => {
-  return React.Children.toArray(nodes).reduce(
-    (columns: Column[], node: any) => {
-      if (
-        node.type === React.Fragment ||
-        node.type.displayName === 'Group' ||
-        node.type === Group ||
-        (typeof node.type === 'function' &&
-          node.type.prototype instanceof Group)
-      ) {
-        return [...columns, ...getColumns(node.props.children)];
+const getColumns = (node: React.ReactNode) => {
+  return React.Children.toArray(node).reduce(
+    (acc: any[], column: React.ReactNode) => {
+      if (!React.isValidElement<ColumnProps>(column)) {
+        return acc;
       }
 
-      if (!node.props) {
-        return [...columns];
+      if (
+        column.props &&
+        (column.type === Column ||
+          // This is necessary for HMR
+          // @ts-ignore
+          column.type.displayName === 'Column')
+      ) {
+        return [...acc, column.props];
       }
-      return [...columns, node.props];
+
+      return acc;
     },
     [],
   );
 };
 
-const getGroups = (nodes: React.ReactNode = []): any[] => {
-  return React.Children.toArray(nodes).reduce((groups: any[], node: any) => {
-    if (node.type === React.Fragment && node.props.children) {
-      return [...groups, ...getGroups(node.props.children)];
-    }
-    if (
-      node.type.displayName === 'Group' ||
-      node.type === Group ||
-      (typeof node.type === 'function' && node.type.prototype instanceof Group)
-    ) {
-      if (!node.props) {
-        return [...groups];
-      }
-      return [...groups, node.props];
-    }
-
-    return groups;
-  }, []);
+type EnrichedChildren = {
+  children?: React.ReactNode;
 };
+
+const getColumnsAndGroups = (
+  nodes: React.ReactNode = [],
+): {
+  groups: GroupProps[];
+  columns: ColumnProps[];
+} => {
+  return React.Children.toArray(nodes).reduce(
+    (acc: { columns: any[]; groups: any[] }, node) => {
+      if (!React.isValidElement<EnrichedChildren>(node)) {
+        return acc;
+      }
+
+      const elementChild: React.ReactElement<EnrichedChildren> = node;
+
+      if (node.type === React.Fragment && node.props) {
+        if (!('children' in node.props)) {
+          throw new Error('Your fragment must include children');
+        }
+
+        return {
+          ...acc,
+          ...getColumnsAndGroups(node.props.children),
+        };
+      }
+
+      if (
+        elementChild.type === Group ||
+        // This is necessary for HMR
+        // @ts-ignore
+        elementChild.type.displayName === 'Group'
+      ) {
+        return {
+          ...acc,
+          columns: [...acc.columns, ...getColumns(node.props.children)],
+          groups: [...acc.groups, node.props],
+        };
+      }
+
+      return {
+        ...acc,
+        columns: [...acc.columns, ...getColumns(node)],
+      };
+    },
+    {
+      columns: [],
+      groups: [],
+    },
+  );
+};
+
+function getGroupHeaders(columnSchema: {
+  groups: GroupProps[];
+  columns: {}[];
+}) {
+  return columnSchema.groups.map((group, index) => {
+    const groupHeaderWidth = React.Children.toArray(group.children).reduce(
+      (width: number, child: any) => width + child.props.width,
+      0,
+    );
+
+    const groupProps = {
+      columns: columnSchema.columns,
+      groupData: group.groupData,
+      width: groupHeaderWidth,
+    };
+
+    // temporary set this to any
+    const GroupHeader: any = group.headerRenderer;
+
+    return <GroupHeader key={index} {...groupProps} />;
+  });
+}
 
 const DataScroller = (props: DataTableProps) => {
   const tableScrollerRef = useRef<HTMLDivElement>(null);
   const [topRowIndex, setTopRowIndex] = useState(props.initialTopRowIndex);
   const totalVisibleRows = useTotalVisibleRows(props);
+  const frozenGroupsAndColumns = useMemo(
+    () => getColumnsAndGroups(props.frozenColumns),
+    [props.frozenColumns],
+  );
+  const standardGroupsAndColumns = useMemo(
+    () => getColumnsAndGroups(props.columns),
+    [props.columns],
+  );
   const {
     frozenColumnsScrollWidth,
     tableScrollHeight,
     tableScrollWidth,
-  } = useTableScrollDimensions(props);
+  } = useTableScrollDimensions({
+    ...props,
+    columns: standardGroupsAndColumns.columns,
+    frozenColumns: frozenGroupsAndColumns.columns,
+  });
 
   useEffect(() => {
     props.onRowsRendered({
@@ -81,62 +154,36 @@ const DataScroller = (props: DataTableProps) => {
     setTopRowIndex(newTopRowIndex);
   };
 
-  const frozenGroupHeaders = useMemo(() =>
-    getGroups(props.frozenColumns).map(group => {
-      const groupHeaderWidth = group.children.reduce(
-        (width: number, child: any) => width + child.props.width,
-        0,
-      );
-
-      const groupProps = {
-        columns: group.children.map((child: any) => child.props),
-        groupData: group.groupData,
-        width: groupHeaderWidth,
-      };
-      const GroupHeader = group.headerRenderer;
-
-      return <GroupHeader {...groupProps} />;
-    }),
-    [props.frozenColumns]
+  const standardGroupHeaders = useMemo(
+    () => getGroupHeaders(standardGroupsAndColumns),
+    [props.frozenColumns],
+  );
+  const frozenGroupHeaders = useMemo(
+    () => getGroupHeaders(frozenGroupsAndColumns),
+    [props.frozenColumns],
   );
 
-  const groupHeaders = useMemo(() =>
-    getGroups(props.columns).map(group => {
-      const groupHeaderWidth = group.children.reduce(
-        (width: number, child: any) => width + child.props.width,
-        0,
-      );
-
-      const groupProps = {
-        columns: group.children.map((child: any) => child.props),
-        groupData: group.groupData,
-        width: groupHeaderWidth,
-      };
-      const GroupHeader = group.headerRenderer;
-
-      return <GroupHeader {...groupProps} />;
-    }),
-    [props.columns]
-  );
-  const columns= useMemo(() => getColumns(props.columns), [props.columns])
-  const frozenColumns= useMemo(() => getColumns(props.frozenColumns), [props.frozenColumns])
+  const columns = standardGroupsAndColumns.columns;
+  const frozenColumns = frozenGroupsAndColumns.columns;
 
   const regularColumnsWidth = tableScrollWidth;
   return (
     <div
       ref={tableScrollerRef}
-      style={{height: props.height, overflowY: 'auto'}}
+      style={{ height: props.height, overflowY: 'auto' }}
       onScroll={handleScroll}
       data-testid="scroll-container"
-      className="scroll">
-      <div style={{height: tableScrollHeight, position: 'relative'}}>
+      className="scroll"
+    >
+      <div style={{ height: tableScrollHeight, position: 'relative' }}>
         <div
           className="sticky"
           style={{
             display: 'flex',
             fontSize: '20px',
             top: 0,
-          }}>
+          }}
+        >
           {/* Frozen */}
           <div
             style={{
@@ -144,9 +191,10 @@ const DataScroller = (props: DataTableProps) => {
               overflowX: 'scroll',
               overflowY: 'hidden',
               width: frozenColumnsScrollWidth,
-            }}>
-            <div style={{width: frozenColumnsScrollWidth}}>
-              <div style={{display: 'flex', height: props.groupHeaderHeight}}>
+            }}
+          >
+            <div style={{ width: frozenColumnsScrollWidth }}>
+              <div style={{ display: 'flex', height: props.groupHeaderHeight }}>
                 {frozenGroupHeaders}
               </div>
               <Headers
@@ -172,15 +220,13 @@ const DataScroller = (props: DataTableProps) => {
               height: props.height,
               overflowX: 'auto',
               overflowY: 'hidden',
-            }}>
-            <div style={{width: regularColumnsWidth}}>
-              <div style={{display: 'flex', height: props.groupHeaderHeight}}>
-                {groupHeaders}
+            }}
+          >
+            <div style={{ width: regularColumnsWidth }}>
+              <div style={{ display: 'flex', height: props.groupHeaderHeight }}>
+                {standardGroupHeaders}
               </div>
-              <Headers
-                columns={columns}
-                headerHeight={props.headerHeight}
-              />
+              <Headers columns={columns} headerHeight={props.headerHeight} />
               <Rows
                 rowGetter={props.rowGetter}
                 totalVisibleRows={totalVisibleRows}
@@ -196,58 +242,6 @@ const DataScroller = (props: DataTableProps) => {
       </div>
     </div>
   );
-};
-
-const useTableScrollDimensions = (props: DataTableProps) => {
-  const tableScrollHeight = useMemo(() => {
-    const newTableScrollHeight =
-      (props.rowCount + 1) * props.rowHeight +
-      props.headerHeight +
-      props.groupHeaderHeight;
-    return newTableScrollHeight;
-  }, [props.rowHeight, props.rowCount]);
-
-  const tableScrollWidth = useMemo(() => {
-    const newTableScrollWidth = getColumns(props.columns).reduce(
-      (width, column) => width + column.width,
-      0,
-    );
-    return newTableScrollWidth;
-  }, [props.columns]);
-
-  const frozenColumnsScrollWidth = useMemo(() => {
-    const newFrozenColumnsScrollWidth = getColumns(props.frozenColumns).reduce(
-      (width, column) => width + column.width,
-      0,
-    );
-    return newFrozenColumnsScrollWidth;
-  }, [props.frozenColumns]);
-
-  return {
-    frozenColumnsScrollWidth,
-    tableScrollHeight,
-    tableScrollWidth,
-  };
-};
-
-const useTotalVisibleRows = (props: DataTableProps) => {
-  const totalVisibleRows = useMemo(() => {
-    const totalRowsThatFit =
-      (props.height - props.headerHeight - props.groupHeaderHeight) /
-      props.rowHeight;
-    const isLastRowCutOff = totalRowsThatFit % 1 !== 0;
-    const newTotalVisibleRows = isLastRowCutOff
-      ? Math.floor(totalRowsThatFit) + 1
-      : Math.floor(totalRowsThatFit);
-    return newTotalVisibleRows;
-  }, [
-    props.height,
-    props.headerHeight,
-    props.groupHeaderHeight,
-    props.rowHeight,
-  ]);
-
-  return totalVisibleRows;
 };
 
 DataScroller.defaultProps = {

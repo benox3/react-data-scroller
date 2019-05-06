@@ -1,4 +1,5 @@
-import { ReactNode } from "react";
+import React, { ReactNode } from 'react';
+import { Props as GroupProps } from './components/Group';
 
 export type CellRendererArgs = {
   cellData: any;
@@ -7,38 +8,30 @@ export type CellRendererArgs = {
   dataKey: string;
   rowData: any;
   rowIndex: number;
-}
+};
 export type HeaderRendererArgs = {
   columnData: any;
   dataKey: string;
   label: any;
-}
-
-export type Column = {
-  cellRenderer: (arg: CellRendererArgs) => ReactNode;
-  headerRenderer: (arg: HeaderRendererArgs) => ReactNode;
-  width: number;
-  columnData: any;
-  dataKey: string;
-  label: any;
-}
-
+};
 
 export type OnRowsRenderedArgs = {
   startIndex: number;
   overscanStartIndex: number;
   overscanStopIndex: number;
   stopIndex: number;
-}
+};
 
 export type RowGetterArgs = {
   index: number;
-}
+};
 export type RowGetter = (arg: RowGetterArgs) => any;
 
+export type ColumnAndGroup = React.ReactFragment | React.ReactNode;
+
 export type DataTableProps = {
-  columns: Column[];
-  frozenColumns: Column[];
+  columns: React.ReactNode;
+  frozenColumns: React.ReactNode;
   groupHeaderHeight: number;
   headerHeight: number;
   height: number;
@@ -49,7 +42,7 @@ export type DataTableProps = {
   rowHeight: number;
   rowRenderer: React.FC<Row>;
   width: number;
-}
+};
 
 export type DataTableState = {
   tableScrollHeight: number;

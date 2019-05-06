@@ -1,17 +1,14 @@
-import React from "react";
-import { Column } from "../../types";
+import React from 'react';
+import { Props as ColumnProps } from '../Column';
 
 export type Props = {
   headerHeight: number;
-  columns: Column[];
+  columns: ColumnProps[];
 };
 
-export default function({
-  headerHeight,
-  columns
-}: Props) {
+export default function({ headerHeight, columns }: Props) {
   return (
-    <div style={{ display: "flex", height: headerHeight }}>
+    <div style={{ display: 'flex', height: headerHeight }}>
       {columns.map((column, index) => (
         <div key={index} style={{ width: column.width }}>
           {(column.headerRenderer && column.headerRenderer(column)) || <div />}

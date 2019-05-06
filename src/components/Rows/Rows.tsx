@@ -1,8 +1,9 @@
 import React from 'react';
-import { Column, Row, RowGetter } from '../../types';
+import { Row, RowGetter } from '../../types';
+import { Props as ColumnProps } from '../Column';
 
 export type Props = {
-  columns: Column[];
+  columns: ColumnProps[];
   topRowIndex: number;
   rowHeight: number;
   rowRenderer: React.FC<Row>;

@@ -1,17 +1,16 @@
 import * as faker from 'faker';
 import * as React from 'react';
-import ColumnComp from '../src/Column';
+import {Column, ColumnProps} from '../src/';
 import Group from '../src/components/Group';
 
 import {storiesOf} from '@storybook/react';
 import DataScroller, {
   CellRendererArgs,
-  Column,
   HeaderRendererArgs,
   RowGetterArgs,
 } from '../src';
 
-const cellRenderer = ({rowData}: CellRendererArgs) => {
+const cellRenderer = function CellRenderer({rowData}: CellRendererArgs) {
   return (
     <div
       className="hover"
@@ -64,7 +63,7 @@ const rows = generateRows(rowCount);
 
 const rowGetter = ({index}: RowGetterArgs) => rows[index];
 
-let columns: Column[] = [];
+let columns: ColumnProps[] = [];
 for (let counter = 0; counter < 10; counter++) {
   columns = [...initialColumns, ...(columns || [])];
 }
@@ -74,7 +73,7 @@ columns = columns.map((column, index) => ({
   columnData: {...(column.columnData || {}), columnIndex: index},
 }));
 
-let frozenColumns: Column[] = [];
+let frozenColumns: ColumnProps[] = [];
 for (let counter = 0; counter < 2; counter++) {
   frozenColumns = [...initialColumns, ...(frozenColumns || [])];
 }
@@ -105,27 +104,20 @@ storiesOf('react-data-scroller', module).add('default', () => (
     headerHeight={100}
     width={500}
     groupHeaderHeight={30}
-    // @ts-ignore
-    columns={
-      <>
-        <Group headerRenderer={GroupHeaderA}>
-          {columns.map(column => (
-            // @ts-ignore
-            <ColumnComp {...column} />
-          ))}
-        </Group>
-        <Group headerRenderer={GroupHeaderB}>
-          {columns.map(column => (
-            // @ts-ignore
-            <ColumnComp {...column} />
-          ))}
-        </Group>
-      </>
-    }
-    // @ts-ignore
-    frozenColumns={frozenColumns.map(column => (
-      // @ts-ignore
-      <ColumnComp {...column} />
+    columns={[
+      <Group key="groupa" headerRenderer={GroupHeaderA}>
+        {columns.map((column, index) => (
+          <Column key={index} {...column} />
+        ))}
+      </Group>,
+      <Group key="groupb" headerRenderer={GroupHeaderB}>
+        {columns.map((column, index) => (
+          <Column key={index} {...column} />
+        ))}
+      </Group>,
+    ]}
+    frozenColumns={frozenColumns.map((column, index) => (
+      <Column key={index} {...column} />
     ))}
   />
 ));

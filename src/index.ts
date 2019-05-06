@@ -1,12 +1,11 @@
 /* DataScroller */
 export { default } from './DataScroller';
 export { default as Group } from './components/Group';
-export { default as ColumnComp } from './Column';
+export { default as Column, Props as ColumnProps } from './components/Column';
 
 /* Types */
 export {
   CellRendererArgs,
-  Column,
   DataTableProps,
   DataTableState,
   HeaderRendererArgs,
