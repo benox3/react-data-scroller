@@ -11,6 +11,7 @@
   "scripts": {
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
+    "deploy-storybook": "storybook-to-ghpages",
     "clean": "rm -rf dist",
     "build": "yarn clean && yarn rollup -c rollup.config.js",
     "lint": "yarn tslint -p .",
@@ -25,6 +26,7 @@
     "@storybook/addon-links": "^5.0.1",
     "@storybook/addons": "^5.0.1",
     "@storybook/react": "^5.0.1",
+    "@storybook/storybook-deployer": "^2.8.1",
     "@types/faker": "^4.1.5",
     "@types/jest": "^24.0.11",
     "@types/react": "^16.8.7",
