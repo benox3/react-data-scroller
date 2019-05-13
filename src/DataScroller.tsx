@@ -141,10 +141,16 @@ const DataScroller = (props: DataTableProps) => {
     });
   }, [topRowIndex, totalVisibleRows]);
 
+  useEffect(() => {
+    if (tableScrollerRef && tableScrollerRef.current) {
+      const newScrollTop = props.initialTopRowIndex * props.rowHeight;
+      tableScrollerRef.current.scrollTop = newScrollTop;
+    }
+  }, [tableScrollerRef, props.rowCount]);
+
   const handleScroll = (e: UIEvent<HTMLDivElement>) => {
-    const scrollPosition = tableScrollerRef.current
-      ? tableScrollerRef.current.scrollTop
-      : 0;
+    if (!tableScrollerRef.current) return;
+    const scrollPosition = tableScrollerRef.current.scrollTop;
     const newTopRowIndex = Math.floor(scrollPosition / props.rowHeight);
 
     setTopRowIndex(newTopRowIndex);
