@@ -4,8 +4,7 @@
   "description": "react component for scrolling large amounts of data efficiently",
   "main": "dist/react-data-scroller.js",
   "module": "dist/react-data-scroller.ejs",
-  "typings": "dist/types/react-data-scroller.d.ts",
-  "types": "./lib/index.d.ts",
+  "types": "dist/types/index.d.ts",
   "author": "Ben Budnevich",
   "license": "MIT",
   "scripts": {
@@ -49,7 +48,7 @@
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.0.1",
     "tslint-react": "^3.6.0",
-    "typescript": "^3.3.3333",
+    "typescript": "^3.4.5",
     "typescript-tslint-plugin": "^0.3.1"
   },
   "peerDependencies": {
