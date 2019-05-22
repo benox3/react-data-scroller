@@ -1,5 +1,12 @@
 /* Dependencies */
-import React, { UIEvent, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  UIEvent,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import Column, { Props as ColumnProps } from './components/Column';
 import Group, { Props as GroupProps } from './components/Group';
 import Headers from './components/Headers';
@@ -141,12 +148,12 @@ const DataScroller = (props: DataTableProps) => {
     });
   }, [topRowIndex, totalVisibleRows]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (tableScrollerRef && tableScrollerRef.current) {
-      const newScrollTop = props.initialTopRowIndex * props.rowHeight;
+      const newScrollTop = topRowIndex * props.rowHeight;
       tableScrollerRef.current.scrollTop = newScrollTop;
     }
-  }, [tableScrollerRef, props.rowCount]);
+  }, [props.rowCount]);
 
   const handleScroll = (e: UIEvent<HTMLDivElement>) => {
     if (!tableScrollerRef.current) return;
