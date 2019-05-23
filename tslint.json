@@ -25,7 +25,8 @@
       }
     ],
     "ter-arrow-parens": false,
-    "variable-name": [false, "check-format", "allow-pascal-case"]
+    "variable-name": [false, "check-format", "allow-pascal-case"],
+    "one-variable-per-declaration":false
   },
   "rulesDirectory": []
 }

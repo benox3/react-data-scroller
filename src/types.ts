@@ -1,16 +1,15 @@
 import React, { ReactNode } from 'react';
-import { Props as GroupProps } from './components/Group';
 
 export type CellRendererArgs = {
   cellData: any;
-  columnData: any;
+  columnData?: any;
   columnIndex: number;
   dataKey: string;
   rowData: any;
   rowIndex: number;
 };
 export type HeaderRendererArgs = {
-  columnData: any;
+  columnData?: any;
   dataKey: string;
   label: any;
 };

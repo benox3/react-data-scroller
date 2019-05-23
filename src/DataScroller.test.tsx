@@ -45,7 +45,7 @@ const initialColumns = [
 
 const generateRows = (n: number) => {
   const arr = Array.apply(null, Array(n));
-  return arr.map((item: any, index: number) => {
+  return arr.map((_, index: number) => {
     return {
       index,
       avatar: faker.image.imageUrl(100, 100, 'people'),
