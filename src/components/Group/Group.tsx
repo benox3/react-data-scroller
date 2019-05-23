@@ -1,15 +1,20 @@
 import React from 'react';
-import { Props as ColumnProps } from '../Column';
 
-export type Props = {
-  children: React.ReactNode;
-  groupData?: any;
-  headerRenderer: ({ width }: { width: number }) => React.ReactNode;
+export type Props<GroupData> = {
+  children?: React.ReactNode;
+  groupData: any;
+  headerRenderer?: React.ComponentType<{
+    groupData: GroupData;
+    width: number;
+  }>;
 };
 
-export default function Group({ children, headerRenderer, groupData }: Props) {
+// @ts-ignore
+function Group(props: Props) {
   return null;
 }
 
 // Used for identifying the component type when iterating through children
 Group.__Group__ = true;
+
+export default Group;

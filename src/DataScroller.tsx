@@ -1,14 +1,13 @@
 /* Dependencies */
 import React, {
-  UIEvent,
   useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
-import Column, { Props as ColumnProps } from './components/Column';
-import Group, { Props as GroupProps } from './components/Group';
+import { Props as ColumnProps } from './components/Column';
+import { Props as GroupProps } from './components/Group';
 import Headers from './components/Headers';
 import defaultRowRenderer from './components/Row';
 import Rows from './components/Rows';
@@ -49,7 +48,7 @@ type EnrichedChildren = {
 const getColumnsAndGroups = (
   nodes: React.ReactNode = [],
 ): {
-  groups: GroupProps[];
+  groups: GroupProps<any>[];
   columns: ColumnProps[];
 } => {
   return React.Children.toArray(nodes).reduce(
@@ -95,7 +94,7 @@ const getColumnsAndGroups = (
 };
 
 function getGroupHeaders(columnSchema: {
-  groups: GroupProps[];
+  groups: GroupProps<any>[];
   columns: {}[];
 }) {
   return columnSchema.groups.map((group, index) => {
@@ -155,7 +154,7 @@ const DataScroller = (props: DataTableProps) => {
     }
   }, [props.rowCount]);
 
-  const handleScroll = (e: UIEvent<HTMLDivElement>) => {
+  const handleScroll = () => {
     if (!tableScrollerRef.current) return;
     const scrollPosition = tableScrollerRef.current.scrollTop;
     const newTopRowIndex = Math.floor(scrollPosition / props.rowHeight);

@@ -1,9 +1,5 @@
 import React from 'react';
 
-export type NodesMap<Node> = {
-  [key: number]: Node;
-};
-
 export type OnTableRowsRenderedArg = {
   startIndex: number;
   stopIndex: number;
@@ -25,7 +21,7 @@ function defaultIsNodeNotAvailable<Node>(product: Node) {
   return !Boolean(product);
 }
 
-export default function InfiniteLoader<Node>(props: Props<Node>) {
+function InfiniteLoader<Node>(props: Props<Node>) {
   const onTableRowsRendered = ({
     startIndex,
     stopIndex,
@@ -59,3 +55,5 @@ export default function InfiniteLoader<Node>(props: Props<Node>) {
 InfiniteLoader.defaultProps = {
   isNodeNotAvailable: defaultIsNodeNotAvailable,
 };
+
+export default InfiniteLoader;

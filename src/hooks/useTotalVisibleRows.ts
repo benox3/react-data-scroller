@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { DataTableProps } from '../types';
 
 export default function useTotalVisibleRows(props: DataTableProps) {

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Props as ColumnProps } from '../components/Column';
 import { DataTableProps } from '../types';
 
