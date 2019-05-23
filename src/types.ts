@@ -40,6 +40,7 @@ export type DataTableProps = {
   rowGetter: RowGetter;
   rowHeight: number;
   rowRenderer: React.FC<Row>;
+  scrollToIndex: number | null;
   width: number;
 };
 

@@ -139,12 +139,18 @@ const DataScroller = (props: DataTableProps) => {
   });
 
   useEffect(() => {
-    props.onRowsRendered({
-      overscanStartIndex: topRowIndex,
-      overscanStopIndex: topRowIndex + totalVisibleRows,
-      startIndex: topRowIndex,
-      stopIndex: topRowIndex + totalVisibleRows,
-    });
+    let isDisabled = false;
+    if (!isDisabled) {
+      props.onRowsRendered({
+        overscanStartIndex: topRowIndex,
+        overscanStopIndex: topRowIndex + totalVisibleRows,
+        startIndex: topRowIndex,
+        stopIndex: topRowIndex + totalVisibleRows,
+      });
+    }
+    () => {
+      isDisabled = true;
+    };
   }, [topRowIndex, totalVisibleRows]);
 
   useLayoutEffect(() => {
@@ -153,6 +159,14 @@ const DataScroller = (props: DataTableProps) => {
       tableScrollerRef.current.scrollTop = newScrollTop;
     }
   }, [props.rowCount]);
+
+  useLayoutEffect(() => {
+    if (props.scrollToIndex && tableScrollerRef && tableScrollerRef.current) {
+      const newScrollTop = props.scrollToIndex * props.rowHeight;
+      tableScrollerRef.current.scrollTop = newScrollTop;
+      setTopRowIndex(props.scrollToIndex);
+    }
+  }, [props.scrollToIndex]);
 
   const handleScroll = () => {
     if (!tableScrollerRef.current) return;
@@ -259,6 +273,7 @@ DataScroller.defaultProps = {
   initialTopRowIndex: 0,
   onRowsRendered: ({}) => undefined,
   rowRenderer: defaultRowRenderer,
+  scrollToIndex: null,
 };
 
 export default React.memo(DataScroller);

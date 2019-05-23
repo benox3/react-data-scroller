@@ -1,5 +1,5 @@
 import * as faker from 'faker';
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Column, ColumnProps } from '../src/';
 import Group from '../src/components/Group';
 
@@ -50,7 +50,7 @@ const initialColumns = [
 
 const generateRows = (n: number) => {
   const arr = Array.apply(null, Array(n));
-  return arr.map((item, index) => {
+  return arr.map((_, index) => {
     return {
       index,
       avatar: faker.image.imageUrl(100, 100, 'people'),
@@ -126,4 +126,64 @@ storiesOf('react-data-scroller', module).add('default', () => (
       <Column key={index} {...column} />
     ))}
   />
+));
+
+const ScrollToIndexDataScroller = (props: {
+  children: (arg: {
+    scrollToIndex: number;
+    handleScrollToIndex: () => void;
+  }) => JSX.Element;
+}) => {
+  const [scrollToIndex, setScrollToIndex] = useState();
+  useEffect(() => {
+    setScrollToIndex(null);
+  }, [scrollToIndex]);
+
+  const handleScrollToIndex = () => {
+    setScrollToIndex(20);
+  };
+
+  return props.children({ scrollToIndex, handleScrollToIndex });
+};
+
+storiesOf('react-data-scroller', module).add('scroll to index', () => (
+  <ScrollToIndexDataScroller>
+    {({
+      scrollToIndex,
+      handleScrollToIndex,
+    }: {
+      scrollToIndex: number;
+      handleScrollToIndex: () => void;
+    }) => (
+      <div>
+        <button onClick={handleScrollToIndex}>Scroll to 20</button>
+        <DataScroller
+          rowCount={rowCount}
+          rowGetter={rowGetter}
+          rowHeight={50}
+          height={500}
+          headerHeight={100}
+          width={500}
+          initialTopRowIndex={50}
+          groupHeaderHeight={30}
+          scrollToIndex={scrollToIndex}
+          columns={[
+            <Group key="groupa" headerRenderer={GroupHeaderA}>
+              {columns.map((column, index) => (
+                <Column key={index} {...column} />
+              ))}
+            </Group>,
+            <Group key="groupb" headerRenderer={GroupHeaderB}>
+              {columns.map((column, index) => (
+                <Column key={index} {...column} />
+              ))}
+            </Group>,
+          ]}
+          frozenColumns={frozenColumns.map((column, index) => (
+            <Column key={index} {...column} />
+          ))}
+        />
+      </div>
+    )}
+  </ScrollToIndexDataScroller>
 ));
