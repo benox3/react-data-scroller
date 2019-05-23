@@ -166,7 +166,6 @@ const DataScroller = (props: DataTableProps) => {
       tableScrollerRef &&
       tableScrollerRef.current
     ) {
-      console.log('scrolltoindex', props.scrollToIndex);
       const newScrollTop = props.scrollToIndex * props.rowHeight;
       tableScrollerRef.current.scrollTop = newScrollTop;
       setTopRowIndex(props.scrollToIndex);
