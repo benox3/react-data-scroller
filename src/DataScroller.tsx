@@ -13,6 +13,7 @@ import defaultRowRenderer from './components/Row';
 import Rows from './components/Rows';
 import useTableScrollDimensions from './hooks/useTableScrollDimensions';
 import useTotalVisibleRows from './hooks/useTotalVisibleRows';
+import Stickyfill from 'stickyfilljs';
 
 /* Types */
 import { DataTableProps } from './types';
@@ -118,6 +119,7 @@ function getGroupHeaders(columnSchema: {
 
 const DataScroller = (props: DataTableProps) => {
   const tableScrollerRef = useRef<HTMLDivElement>(null);
+  const stickyContainerRef = useRef<HTMLDivElement>(null);
   const [topRowIndex, setTopRowIndex] = useState(props.initialTopRowIndex);
   const totalVisibleRows = useTotalVisibleRows(props);
   const frozenGroupsAndColumns = useMemo(
@@ -137,6 +139,13 @@ const DataScroller = (props: DataTableProps) => {
     columns: standardGroupsAndColumns.columns,
     frozenColumns: frozenGroupsAndColumns.columns,
   });
+
+  // polyfill for sticky
+  useEffect(() => {
+    if (stickyContainerRef.current) {
+      Stickyfill.add(stickyContainerRef.current);
+    }
+  }, []);
 
   useEffect(() => {
     let isDisabled = false;
@@ -204,6 +213,7 @@ const DataScroller = (props: DataTableProps) => {
     >
       <div style={{ height: tableScrollHeight, position: 'relative' }}>
         <div
+          ref={stickyContainerRef}
           className="sticky"
           style={{
             display: 'flex',

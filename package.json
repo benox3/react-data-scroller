@@ -57,5 +57,7 @@
     "react": "^16.8.4",
     "react-dom": "^16.8.4"
   },
-  "dependencies": {}
+  "dependencies": {
+    "stickyfilljs": "^2.1.0"
+  }
 }
