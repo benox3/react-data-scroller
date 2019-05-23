@@ -148,18 +148,12 @@ const DataScroller = (props: DataTableProps) => {
   }, []);
 
   useEffect(() => {
-    let isDisabled = false;
-    if (!isDisabled) {
-      props.onRowsRendered({
-        overscanStartIndex: topRowIndex,
-        overscanStopIndex: topRowIndex + totalVisibleRows,
-        startIndex: topRowIndex,
-        stopIndex: topRowIndex + totalVisibleRows,
-      });
-    }
-    () => {
-      isDisabled = true;
-    };
+    props.onRowsRendered({
+      overscanStartIndex: topRowIndex,
+      overscanStopIndex: topRowIndex + totalVisibleRows,
+      startIndex: topRowIndex,
+      stopIndex: topRowIndex + totalVisibleRows,
+    });
   }, [topRowIndex, totalVisibleRows]);
 
   useLayoutEffect(() => {
