@@ -33,7 +33,7 @@ function Rows({
         }
 
         return (
-          <div style={{ height: rowHeight }} key={index}>
+          <div style={{ height: rowHeight, display: 'flex' }} key={index}>
             <RowRenderer rowIndex={rowIndex}>
               {columns.map((column, columnIndex) => (
                 <div key={columnIndex} style={{ width: column.width }}>
