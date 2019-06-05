@@ -1,12 +1,12 @@
 import React from 'react';
-import { Row, RowGetter } from '../../types';
+import { RowGetter, RowProps } from '../../types';
 import { Props as ColumnProps } from '../Column';
 
 export type Props = {
   columns: ColumnProps[];
   topRowIndex: number;
   rowHeight: number;
-  rowRenderer: React.FC<Row>;
+  rowRenderer: React.FC<RowProps>;
   totalVisibleRows: number;
   rowGetter: RowGetter;
   rowCount: number;
@@ -33,24 +33,26 @@ function Rows({
         }
 
         return (
-          <RowRenderer rowHeight={rowHeight} key={index}>
-            {columns.map((column, columnIndex) => (
-              <div key={columnIndex} style={{ width: column.width }}>
-                {column.cellRenderer ? (
-                  column.cellRenderer({
-                    columnIndex,
-                    rowIndex,
-                    cellData: row[column.dataKey],
-                    columnData: column.columnData,
-                    dataKey: column.dataKey,
-                    rowData: row,
-                  })
-                ) : (
-                  <div>{row[column.dataKey]}</div>
-                )}
-              </div>
-            ))}
-          </RowRenderer>
+          <div style={{ height: rowHeight }} key={index}>
+            <RowRenderer rowIndex={rowIndex}>
+              {columns.map((column, columnIndex) => (
+                <div key={columnIndex} style={{ width: column.width }}>
+                  {column.cellRenderer ? (
+                    column.cellRenderer({
+                      columnIndex,
+                      rowIndex,
+                      cellData: row[column.dataKey],
+                      columnData: column.columnData,
+                      dataKey: column.dataKey,
+                      rowData: row,
+                    })
+                  ) : (
+                    <div>{row[column.dataKey]}</div>
+                  )}
+                </div>
+              ))}
+            </RowRenderer>
+          </div>
         );
       })}
     </div>

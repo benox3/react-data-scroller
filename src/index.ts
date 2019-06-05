@@ -6,6 +6,7 @@ export {
 } from './components/InfiniteLoader';
 export { default as Group, Props as GroupProps } from './components/Group';
 export { default as Column, Props as ColumnProps } from './components/Column';
+export { default as Row } from './components/Row';
 
 /* Types */
 export {
@@ -15,4 +16,5 @@ export {
   HeaderRendererArgs,
   OnRowsRenderedArgs,
   RowGetterArgs,
+  RowProps,
 } from './types';

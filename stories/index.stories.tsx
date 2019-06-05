@@ -2,6 +2,8 @@ import * as faker from 'faker';
 import React, { useState, useEffect } from 'react';
 import { Column, ColumnProps } from '../src/';
 import Group from '../src/components/Group';
+import Row from '../src/components/Row';
+import { RowProps } from '../src/types';
 
 import { storiesOf } from '@storybook/react';
 import DataScroller, {
@@ -187,3 +189,43 @@ storiesOf('react-data-scroller', module).add('scroll to index', () => (
     )}
   </ScrollToIndexDataScroller>
 ));
+
+storiesOf('react-data-scroller', module).add('custom rowRenderer', () => {
+  const rowRenderer = ({ rowIndex, children }: RowProps) => {
+    // Render AMOUNT_OF_PADDING_ROWS empty rows
+    if (rowIndex === 0) {
+      return <div style={{ display: 'flex' }}>My Custom Row!</div>;
+    }
+
+    return <Row rowIndex={rowIndex} children={children} />;
+  };
+
+  return (
+    <DataScroller
+      rowCount={rowCount}
+      rowGetter={rowGetter}
+      rowHeight={50}
+      height={500}
+      headerHeight={100}
+      width={500}
+      initialTopRowIndex={50}
+      groupHeaderHeight={30}
+      rowRenderer={rowRenderer}
+      columns={[
+        <Group key="groupa" headerRenderer={GroupHeaderA}>
+          {columns.map((column, index) => (
+            <Column key={index} {...column} />
+          ))}
+        </Group>,
+        <Group key="groupb" headerRenderer={GroupHeaderB}>
+          {columns.map((column, index) => (
+            <Column key={index} {...column} />
+          ))}
+        </Group>,
+      ]}
+      frozenColumns={frozenColumns.map((column, index) => (
+        <Column key={index} {...column} />
+      ))}
+    />
+  );
+});

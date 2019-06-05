@@ -1,8 +1,8 @@
 import React from 'react';
-import { Row } from '../../types';
+import { RowProps } from '../../types';
 
-const RowRenderer = ({ rowHeight, children }: Row) => {
-  return <div style={{ display: 'flex', height: rowHeight }}>{children}</div>;
+const RowRenderer = ({ children }: RowProps) => {
+  return <div style={{ display: 'flex' }}>{children}</div>;
 };
 
 export default RowRenderer;

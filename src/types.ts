@@ -39,7 +39,7 @@ export type DataTableProps = {
   rowCount: number;
   rowGetter: RowGetter;
   rowHeight: number;
-  rowRenderer: React.FC<Row>;
+  rowRenderer: React.FC<RowProps>;
   scrollToIndex: number | null;
   width: number;
 };
@@ -53,7 +53,7 @@ export type DataTableState = {
   frozenColumnsWidth: number;
 };
 
-export type Row = {
-  rowHeight: number;
+export type RowProps = {
   children: ReactNode;
+  rowIndex: number;
 };
