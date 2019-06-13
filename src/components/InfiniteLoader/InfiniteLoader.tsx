@@ -12,7 +12,6 @@ export type Props<Node> = {
   children: (arg: {
     onTableRowsRendered: (arg: OnTableRowsRenderedArg) => void;
   }) => React.ReactElement;
-  offset: number;
   onTableRowsRendered: (arg: OnTableRowsRenderedArg) => void;
   isNodeNotAvailable: (node: Node) => boolean;
 };
@@ -32,9 +31,9 @@ function InfiniteLoader<Node>(props: Props<Node>) {
     props.onTableRowsRendered({ startIndex, stopIndex });
 
     let shouldFetch = false;
-    let offset = props.offset;
+    let offset = startIndex;
 
-    for (let i = startIndex; i < stopIndex; i += 1) {
+    for (let i = startIndex; i < stopIndex && i < props.rowCount - 1; i += 1) {
       if (props.isNodeNotAvailable(props.nodes[i])) {
         shouldFetch = true;
         offset = i;
@@ -52,8 +51,12 @@ function InfiniteLoader<Node>(props: Props<Node>) {
   });
 }
 
+const noop = () => {};
+
 InfiniteLoader.defaultProps = {
   isNodeNotAvailable: defaultIsNodeNotAvailable,
+  onTableRowsRendered: noop,
+  fetchMore: noop,
 };
 
 export default InfiniteLoader;
