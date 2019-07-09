@@ -34,6 +34,20 @@ describe('useTotalVisibleRows()', () => {
         expect(result.current).toBe(5);
       });
     });
+
+    describe('when no rows would be visible', () => {
+      it('defaults to 0 instead of negative number', () => {
+        const props = {
+          groupHeaderHeight: 35,
+          height: 10,
+          headerHeight: 20,
+          rowHeight: 10,
+        };
+
+        const { result } = renderHook(() => useTotalVisibleRows(props));
+        expect(result.current).toBe(0);
+      });
+    });
   });
 
   describe('updating as props change', () => {
