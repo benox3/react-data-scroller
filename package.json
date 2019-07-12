@@ -7,6 +7,10 @@
   "types": "dist/types/index.d.ts",
   "author": "Ben Budnevich",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/benox3/react-data-scroller.git"
+  },
   "scripts": {
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
