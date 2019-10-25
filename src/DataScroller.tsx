@@ -210,7 +210,6 @@ const DataScroller = (props: DataTableProps) => {
           className="sticky"
           style={{
             display: 'flex',
-            fontSize: '20px',
             top: 0,
           }}
         >
