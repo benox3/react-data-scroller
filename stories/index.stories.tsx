@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Column, ColumnProps } from '../src/';
 import Group from '../src/components/Group';
 import Row from '../src/components/Row';
-import { RowProps } from '../src/types';
+import { RowProps, GetRowKey } from '../src/types';
 
 import { storiesOf } from '@storybook/react';
 import DataScroller, {
@@ -127,6 +127,37 @@ storiesOf('react-data-scroller', module).add('default', () => (
     frozenColumns={frozenColumns.map((column, index) => (
       <Column key={index} {...column} />
     ))}
+  />
+));
+
+const customGetRowKey: GetRowKey = ({ renderIndex }) => renderIndex;
+
+storiesOf('react-data-scroller', module).add('custom row key', () => (
+  <DataScroller
+    rowCount={rowCount}
+    rowGetter={rowGetter}
+    rowHeight={50}
+    height={500}
+    headerHeight={100}
+    width={500}
+    initialTopRowIndex={50}
+    groupHeaderHeight={30}
+    columns={[
+      <Group key="groupa" headerRenderer={GroupHeaderA}>
+        {columns.map((column, index) => (
+          <Column key={index} {...column} />
+        ))}
+      </Group>,
+      <Group key="groupb" headerRenderer={GroupHeaderB}>
+        {columns.map((column, index) => (
+          <Column key={index} {...column} />
+        ))}
+      </Group>,
+    ]}
+    frozenColumns={frozenColumns.map((column, index) => (
+      <Column key={index} {...column} />
+    ))}
+    getRowKey={customGetRowKey}
   />
 ));
 
