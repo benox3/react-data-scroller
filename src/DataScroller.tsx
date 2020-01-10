@@ -16,7 +16,7 @@ import useTotalVisibleRows from './hooks/useTotalVisibleRows';
 import Stickyfill from 'stickyfilljs';
 
 /* Types */
-import { DataTableProps } from './types';
+import { DataTableProps, GetRowKey } from './types';
 
 /* Styles */
 import './styles.css';
@@ -238,6 +238,7 @@ const DataScroller = (props: DataTableProps) => {
                 rowHeight={props.rowHeight}
                 rowRenderer={props.rowRenderer}
                 rowCount={props.rowCount}
+                getRowKey={props.getRowKey}
               />
             </div>
           </div>
@@ -264,6 +265,7 @@ const DataScroller = (props: DataTableProps) => {
                 rowHeight={props.rowHeight}
                 rowRenderer={props.rowRenderer}
                 rowCount={props.rowCount}
+                getRowKey={props.getRowKey}
               />
             </div>
           </div>
@@ -273,6 +275,9 @@ const DataScroller = (props: DataTableProps) => {
   );
 };
 
+const defaultGetRowKey: GetRowKey = ({ renderIndex, topRowIndex }) =>
+  renderIndex + topRowIndex;
+
 DataScroller.defaultProps = {
   frozenColumns: [],
   groupHeaderHeight: 0,
@@ -281,6 +286,7 @@ DataScroller.defaultProps = {
   onRowsRendered: ({}) => undefined,
   rowRenderer: defaultRowRenderer,
   scrollToIndex: null,
+  getRowKey: defaultGetRowKey,
 };
 
 export default React.memo(DataScroller);

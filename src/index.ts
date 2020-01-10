@@ -17,4 +17,5 @@ export {
   OnRowsRenderedArgs,
   RowGetterArgs,
   RowProps,
+  GetRowKey,
 } from './types';

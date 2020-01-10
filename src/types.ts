@@ -42,7 +42,13 @@ export type DataTableProps = {
   rowRenderer: React.FC<RowProps>;
   scrollToIndex: number | null;
   width: number;
+  getRowKey: GetRowKey;
 };
+
+export type GetRowKey = (args: {
+  renderIndex: number;
+  topRowIndex: number;
+}) => number;
 
 export type DataTableState = {
   tableScrollHeight: number;
