@@ -5,12 +5,13 @@ export {
   Props as InfiniteLoaderProps,
 } from './components/InfiniteLoader';
 export { default as Group, Props as GroupProps } from './components/Group';
-export { default as Column, Props as ColumnProps } from './components/Column';
+export { default as Column } from './components/Column';
 export { default as Row } from './components/Row';
 
 /* Types */
 export {
   CellRendererArgs,
+  ColumnProps,
   DataTableProps,
   DataTableState,
   HeaderRendererArgs,

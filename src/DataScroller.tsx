@@ -6,7 +6,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Props as ColumnProps } from './components/Column';
 import { Props as GroupProps } from './components/Group';
 import Headers from './components/Headers';
 import defaultRowRenderer from './components/Row';
@@ -16,7 +15,7 @@ import useTotalVisibleRows from './hooks/useTotalVisibleRows';
 import Stickyfill from 'stickyfilljs';
 
 /* Types */
-import { DataTableProps, GetRowKey } from './types';
+import { ColumnProps, DataTableProps, GetRowKey } from './types';
 
 /* Styles */
 import './styles.css';

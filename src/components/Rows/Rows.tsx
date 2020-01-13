@@ -1,6 +1,7 @@
 import React from 'react';
-import { RowGetter, RowProps, GetRowKey } from '../../types';
-import { Props as ColumnProps } from '../Column';
+import RowChildren from '../RowChildren';
+
+import { RowGetter, RowProps, ColumnProps, GetRowKey } from '../../types';
 
 export type Props = {
   columns: ColumnProps[];
@@ -40,22 +41,11 @@ function Rows({
             key={getRowKey({ renderIndex, topRowIndex })}
           >
             <RowRenderer rowIndex={rowIndex}>
-              {columns.map((column, columnIndex) => (
-                <div key={columnIndex} style={{ width: column.width }}>
-                  {column.cellRenderer ? (
-                    column.cellRenderer({
-                      columnIndex,
-                      rowIndex,
-                      cellData: row[column.dataKey],
-                      columnData: column.columnData,
-                      dataKey: column.dataKey,
-                      rowData: row,
-                    })
-                  ) : (
-                    <div>{row[column.dataKey]}</div>
-                  )}
-                </div>
-              ))}
+              <RowChildren
+                rowIndex={rowIndex}
+                columns={columns}
+                rowData={row}
+              />
             </RowRenderer>
           </div>
         );
@@ -64,4 +54,4 @@ function Rows({
   );
 }
 
-export default React.memo(Rows);
+export default Rows;

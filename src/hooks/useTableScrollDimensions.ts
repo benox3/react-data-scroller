@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
-import { Props as ColumnProps } from '../components/Column';
-import { DataTableProps } from '../types';
+import { ColumnProps, DataTableProps } from '../types';
 
 type Column = Pick<ColumnProps, 'width'>;
 

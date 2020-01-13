@@ -1,8 +1,8 @@
 import React from 'react';
 import { RowProps } from '../../types';
 
-const RowRenderer = ({ children }: RowProps) => {
-  return <>{children}</>;
+const RowRenderer = (props: RowProps) => {
+  return <>{props.children}</>;
 };
 
 export default RowRenderer;

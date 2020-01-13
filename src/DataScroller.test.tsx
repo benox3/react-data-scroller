@@ -1,11 +1,16 @@
 import * as faker from 'faker';
 import React from 'react';
 import { act, fireEvent, render } from 'react-testing-library';
-import Column, { Props as ColumnProps } from './components/Column';
+import Column from './components/Column';
 import Group from './components/Group';
 import DataScroller from './DataScroller';
 
-import { CellRendererArgs, HeaderRendererArgs, RowGetterArgs } from './types';
+import {
+  CellRendererArgs,
+  ColumnProps,
+  HeaderRendererArgs,
+  RowGetterArgs,
+} from './types';
 
 const initialColumns = [
   {

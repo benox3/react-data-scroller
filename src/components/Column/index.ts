@@ -1,1 +1,1 @@
-export { default, Props } from './Column';
+export { default } from './Column';
