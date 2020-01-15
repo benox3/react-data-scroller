@@ -9,14 +9,4 @@ export { default as Column } from './components/Column';
 export { default as Row } from './components/Row';
 
 /* Types */
-export {
-  CellRendererArgs,
-  ColumnProps,
-  DataTableProps,
-  DataTableState,
-  HeaderRendererArgs,
-  OnRowsRenderedArgs,
-  RowGetterArgs,
-  RowProps,
-  GetRowKey,
-} from './types';
+export * from './types';

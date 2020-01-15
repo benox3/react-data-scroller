@@ -1,8 +1,8 @@
 import React from 'react';
 
-export type CellRendererArgs = {
+export type CellRendererArgs<ColumnData = any> = {
   cellData: any;
-  columnData?: any;
+  columnData?: ColumnData;
   columnIndex: number;
   dataKey: string;
   rowData: any;
@@ -70,8 +70,12 @@ export type RowChildrenProps = {
   columns: ColumnProps[];
 };
 
-export type ColumnProps = {
-  cellRenderer?: React.FC<CellRendererArgs>;
+export type CellRenderer<ColumnData = any> =
+  | React.FC<CellRendererArgs<ColumnData>>
+  | undefined;
+
+export type ColumnProps<ColumnData = any> = {
+  cellRenderer?: CellRenderer<ColumnData>;
   headerRenderer?: (arg: HeaderRendererArgs) => React.ReactNode;
   width: number;
   columnData?: any;
