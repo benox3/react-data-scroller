@@ -149,9 +149,9 @@ const DataScroller = (props: DataTableProps) => {
   useEffect(() => {
     props.onRowsRendered({
       overscanStartIndex: topRowIndex,
-      overscanStopIndex: topRowIndex + totalVisibleRows,
+      overscanStopIndex: topRowIndex + totalVisibleRows - 1,
       startIndex: topRowIndex,
-      stopIndex: topRowIndex + totalVisibleRows,
+      stopIndex: topRowIndex + totalVisibleRows - 1,
     });
   }, [topRowIndex, totalVisibleRows]);
 
