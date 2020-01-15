@@ -1,9 +1,9 @@
 import * as faker from 'faker';
 import React, { useState, useEffect } from 'react';
-import { Column, ColumnProps } from '../src/';
+import { Column } from '../src/';
 import Group from '../src/components/Group';
 import Row from '../src/components/Row';
-import { RowProps, GetRowKey } from '../src/types';
+import { RowProps, ColumnProps, GetRowKey } from '../src/types';
 
 import { storiesOf } from '@storybook/react';
 import DataScroller, {
@@ -12,10 +12,9 @@ import DataScroller, {
   RowGetterArgs,
 } from '../src';
 
-const cellRenderer = function CellRenderer({ rowData }: CellRendererArgs) {
+const IndexCell = ({ rowData }: CellRendererArgs) => {
   return (
     <div
-      className="hover"
       style={{
         boxShadow: '0 0 5px 2px black',
       }}
@@ -25,9 +24,36 @@ const cellRenderer = function CellRenderer({ rowData }: CellRendererArgs) {
   );
 };
 
+const CustomInput = function(props: { value: string }) {
+  const [inputValue, setInputValue] = useState(props.value);
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  return <input value={inputValue} onChange={handleOnChange} />;
+};
+
+const FirstNameCell = ({ rowData }: CellRendererArgs) => {
+  return <CustomInput value={rowData.firstName} />;
+};
+
+const LastNameCell = ({ rowData }: CellRendererArgs) => {
+  return <div>{rowData.lastName}</div>;
+};
+
 const initialColumns = [
   {
-    cellRenderer,
+    cellRenderer: IndexCell,
+    columnData: {},
+    dataKey: 'lastName',
+    headerRenderer: ({ columnData }: HeaderRendererArgs) => (
+      <div style={{ background: 'white' }}>Header {columnData.columnIndex}</div>
+    ),
+    label: 'index',
+    width: 200,
+  },
+  {
+    cellRenderer: LastNameCell,
     columnData: {},
     dataKey: 'lastName',
     headerRenderer: ({ columnData }: HeaderRendererArgs) => (
@@ -37,9 +63,7 @@ const initialColumns = [
     width: 200,
   },
   {
-    cellRenderer: ({ rowData }: CellRendererArgs) => {
-      return <div>{rowData.firstName}</div>;
-    },
+    cellRenderer: FirstNameCell,
     columnData: {},
     dataKey: 'firstName',
     headerRenderer: ({ columnData }: HeaderRendererArgs) => (
@@ -228,7 +252,7 @@ storiesOf('react-data-scroller', module).add('custom rowRenderer', () => {
       return <div style={{ display: 'flex' }}>My Custom Row!</div>;
     }
 
-    return <Row rowIndex={rowIndex} children={children} />;
+    return <Row rowIndex={rowIndex}>{children}</Row>;
   };
 
   return (

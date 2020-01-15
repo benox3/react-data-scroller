@@ -1,5 +1,5 @@
 import React from 'react';
-import { Props as ColumnProps } from '../Column';
+import { ColumnProps } from '../../types';
 
 export type Props = {
   headerHeight: number;

@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 
 export type CellRendererArgs = {
   cellData: any;
@@ -60,6 +60,21 @@ export type DataTableState = {
 };
 
 export type RowProps = {
-  children: ReactNode;
   rowIndex: number;
+  children: React.ReactNode;
+};
+
+export type RowChildrenProps = {
+  rowIndex: number;
+  rowData: any;
+  columns: ColumnProps[];
+};
+
+export type ColumnProps = {
+  cellRenderer?: React.FC<CellRendererArgs>;
+  headerRenderer?: (arg: HeaderRendererArgs) => React.ReactNode;
+  width: number;
+  columnData?: any;
+  dataKey: string;
+  label: any;
 };
