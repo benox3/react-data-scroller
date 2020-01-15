@@ -11,7 +11,7 @@ function getTotalVisibleRows(props: Props) {
     props.height - props.headerHeight - props.groupHeaderHeight;
   const totalRowsThatFit = totalTableHeight / props.rowHeight;
 
-  return Math.max(0, Math.ceil(totalRowsThatFit));
+  return Math.max(0, Math.floor(totalRowsThatFit));
 }
 
 export default function useTotalVisibleRows(props: Props) {

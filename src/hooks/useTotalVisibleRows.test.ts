@@ -31,7 +31,7 @@ describe('useTotalVisibleRows()', () => {
         };
 
         const { result } = renderHook(() => useTotalVisibleRows(props));
-        expect(result.current).toBe(5);
+        expect(result.current).toBe(4);
       });
     });
 
@@ -119,7 +119,7 @@ describe('useTotalVisibleRows()', () => {
       expect(result.current).toBe(5);
 
       rerender(nextProps);
-      expect(result.current).toBe(3);
+      expect(result.current).toBe(2);
     });
   });
 });
