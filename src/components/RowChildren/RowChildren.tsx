@@ -6,11 +6,15 @@ const RowChildren = (props: RowChildrenProps) => {
     <>
       {props.columns.map((column, columnIndex) => {
         const CellRenderer = column.cellRenderer;
+        const adjustedColumnIndex = props.columnIndexOffset
+          ? props.columnIndexOffset + columnIndex
+          : columnIndex;
+
         return (
           <div key={columnIndex} style={{ width: column.width }}>
             {CellRenderer ? (
               <CellRenderer
-                columnIndex={columnIndex}
+                columnIndex={adjustedColumnIndex}
                 rowIndex={props.rowIndex}
                 cellData={props.rowData[column.dataKey]}
                 columnData={column.columnData}

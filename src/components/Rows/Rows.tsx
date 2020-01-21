@@ -4,25 +4,28 @@ import RowChildren from '../RowChildren';
 import { RowGetter, RowProps, ColumnProps, GetRowKey } from '../../types';
 
 export type Props = {
+  // used to offset columnIndex when there are frozen colums
+  columnIndexOffset?: number;
   columns: ColumnProps[];
-  topRowIndex: number;
+  getRowKey: GetRowKey;
+  rowCount: number;
+  rowGetter: RowGetter;
   rowHeight: number;
   rowRenderer: React.FC<RowProps>;
+  topRowIndex: number;
   totalVisibleRows: number;
-  rowGetter: RowGetter;
-  rowCount: number;
-  getRowKey: GetRowKey;
 };
 
 function Rows({
+  columnIndexOffset,
   columns,
-  topRowIndex,
+  getRowKey,
+  rowCount,
+  rowGetter,
   rowHeight,
   rowRenderer,
+  topRowIndex,
   totalVisibleRows,
-  rowGetter,
-  rowCount,
-  getRowKey,
 }: Props) {
   const RowRenderer = rowRenderer;
 
@@ -45,6 +48,7 @@ function Rows({
                 rowIndex={rowIndex}
                 columns={columns}
                 rowData={row}
+                columnIndexOffset={columnIndexOffset}
               />
             </RowRenderer>
           </div>
