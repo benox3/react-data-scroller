@@ -265,6 +265,7 @@ const DataScroller = (props: DataTableProps) => {
                 rowRenderer={props.rowRenderer}
                 rowCount={props.rowCount}
                 getRowKey={props.getRowKey}
+                columnIndexOffset={frozenColumns.length}
               />
             </div>
           </div>

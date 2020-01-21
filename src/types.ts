@@ -68,6 +68,7 @@ export type RowChildrenProps = {
   rowIndex: number;
   rowData: any;
   columns: ColumnProps[];
+  columnIndexOffset?: number;
 };
 
 export type CellRenderer<ColumnData = any> =
