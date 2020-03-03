@@ -1,8 +1,8 @@
 import React from 'react';
 
-export type CellRendererArgs<ColumnData = any> = {
+export type CellRendererArgs<ColumnData = {}> = {
   cellData: any;
-  columnData?: ColumnData;
+  columnData: ColumnData;
   columnIndex: number;
   dataKey: string;
   rowData: any;

@@ -16,7 +16,7 @@ const RowChildren = (props: RowChildrenProps) => {
               <CellRenderer
                 columnIndex={adjustedColumnIndex}
                 rowIndex={props.rowIndex}
-                cellData={props.rowData[column.dataKey]}
+                cellData={props.rowData ? props.rowData[column.dataKey] : {}}
                 columnData={column.columnData}
                 dataKey={column.dataKey}
                 rowData={props.rowData}

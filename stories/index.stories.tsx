@@ -4,6 +4,10 @@ import { Column } from '../src/';
 import Group from '../src/components/Group';
 import Row from '../src/components/Row';
 import { RowProps, ColumnProps, GetRowKey } from '../src/types';
+import {
+  getRowData,
+  DataScrollerContextProvider,
+} from '../src/components/DataScrollerContext/DataScrollerContext';
 
 import { storiesOf } from '@storybook/react';
 import DataScroller, {
@@ -282,5 +286,134 @@ storiesOf('react-data-scroller', module).add('custom rowRenderer', () => {
         <Column key={index} {...column} />
       ))}
     />
+  );
+});
+
+storiesOf('react-data-scroller', module).add('DataScrollerContext', () => {
+  const DetachedIndexCell = ({ index }: { index: number }) => {
+    return (
+      <div
+        style={{
+          boxShadow: '0 0 5px 2px black',
+        }}
+      >
+        {index}
+      </div>
+    );
+  };
+
+  const DetachedFirstNameCell = ({ firstName }: { firstName: string }) => {
+    return <CustomInput value={firstName} />;
+  };
+
+  const DetachedLastNameCell = ({ lastName }: { lastName: string }) => {
+    return <div>{lastName}</div>;
+  };
+
+  const InjectedIndexCell = getRowData((props: any, data: any) => ({
+    ...props,
+    index: data[props.rowIndex].index,
+  }))(DetachedIndexCell);
+
+  const InjectedFirstNameCell = getRowData((props: any, data: any) => ({
+    ...props,
+    firstName: data[props.rowIndex].firstName,
+  }))(DetachedFirstNameCell);
+
+  const InjectedLastNameCell = getRowData((props: any, data: any) => ({
+    ...props,
+    lastName: data[props.rowIndex].lastName,
+  }))(DetachedLastNameCell);
+
+  const initialContextColumns = [
+    {
+      cellRenderer: InjectedIndexCell,
+      columnData: {},
+      dataKey: 'lastName',
+      headerRenderer: ({ columnData }: HeaderRendererArgs) => (
+        <div style={{ background: 'white' }}>
+          Header {columnData.columnIndex}
+        </div>
+      ),
+      label: 'index',
+      width: 200,
+    },
+    {
+      cellRenderer: InjectedLastNameCell,
+      columnData: {},
+      dataKey: 'lastName',
+      headerRenderer: ({ columnData }: HeaderRendererArgs) => (
+        <div style={{ background: 'white' }}>
+          Header {columnData.columnIndex}
+        </div>
+      ),
+      label: 'last name',
+      width: 200,
+    },
+    {
+      cellRenderer: InjectedFirstNameCell,
+      columnData: {},
+      dataKey: 'firstName',
+      headerRenderer: ({ columnData }: HeaderRendererArgs) => (
+        <div>Header{columnData.columnIndex}</div>
+      ),
+      label: 'first name',
+      width: 200,
+    },
+  ];
+
+  const rowGetter = () => {};
+
+  let contextColumns: any[] = [];
+  for (let counter = 0; counter < 10; counter += 1) {
+    contextColumns = [...initialContextColumns, ...(contextColumns || [])];
+  }
+
+  contextColumns = contextColumns.map((column, index) => ({
+    ...column,
+    columnData: { ...(column.columnData || {}), columnIndex: index },
+  }));
+
+  let frozenContextColumns: any[] = [];
+  for (let counter = 0; counter < 2; counter += 1) {
+    frozenContextColumns = [
+      ...initialContextColumns,
+      ...(frozenContextColumns || []),
+    ];
+  }
+
+  frozenContextColumns = frozenContextColumns.map((column, index) => ({
+    ...column,
+    columnData: { ...(column.columnData || {}), columnIndex: index },
+  }));
+
+  return (
+    <DataScrollerContextProvider data={rows}>
+      <DataScroller
+        rowCount={rowCount}
+        rowGetter={rowGetter}
+        rowHeight={50}
+        height={500}
+        headerHeight={100}
+        width={500}
+        initialTopRowIndex={0}
+        groupHeaderHeight={30}
+        columns={[
+          <Group key="groupa" headerRenderer={GroupHeaderA}>
+            {contextColumns.map((column, index) => (
+              <Column key={index} {...column} />
+            ))}
+          </Group>,
+          <Group key="groupb" headerRenderer={GroupHeaderB}>
+            {contextColumns.map((column, index) => (
+              <Column key={index} {...column} />
+            ))}
+          </Group>,
+        ]}
+        frozenColumns={frozenContextColumns.map((column, index) => (
+          <Column key={index} {...column} />
+        ))}
+      />
+    </DataScrollerContextProvider>
   );
 });

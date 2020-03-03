@@ -58,4 +58,4 @@ function Rows({
   );
 }
 
-export default Rows;
+export default React.memo(Rows);
