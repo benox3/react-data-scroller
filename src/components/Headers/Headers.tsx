@@ -15,9 +15,15 @@ export default function Headers({ headerHeight, columns }: Props) {
 }
 
 function renderColumn(column: ColumnProps, index: number) {
+  const Header = column.headerRenderer || FallbackHeader;
+
   return (
     <div key={index} style={{ width: column.width }}>
-      {(column.headerRenderer && column.headerRenderer(column)) || <div />}
+      <Header {...column} />
     </div>
   );
+}
+
+function FallbackHeader() {
+  return <div />;
 }

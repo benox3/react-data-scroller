@@ -77,9 +77,9 @@ export type CellRenderer<ColumnData = any> =
 
 export type ColumnProps<ColumnData = any> = {
   cellRenderer?: CellRenderer<ColumnData>;
-  headerRenderer?: (arg: HeaderRendererArgs) => React.ReactNode;
-  width: number;
   columnData?: any;
   dataKey: string;
+  headerRenderer?: (arg: HeaderRendererArgs) => React.ReactElement;
   label: any;
+  width: number;
 };
