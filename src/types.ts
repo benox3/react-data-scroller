@@ -5,7 +5,8 @@ export type CellRendererArgs<ColumnData = {}> = {
   columnData: ColumnData;
   columnIndex: number;
   dataKey: string;
-  rowData: any;
+  // @deprecated: Prefer getRowData with DataScrollerContext
+  rowData?: any;
   rowIndex: number;
 };
 export type HeaderRendererArgs = {
