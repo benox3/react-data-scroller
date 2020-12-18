@@ -1,6 +1,6 @@
 {
   "name": "react-data-scroller",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "react component for scrolling large amounts of data efficiently",
   "main": "dist/react-data-scroller.js",
   "module": "dist/react-data-scroller.ejs",
