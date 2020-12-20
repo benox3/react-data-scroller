@@ -2,18 +2,28 @@ import React from 'react';
 import { ColumnProps } from '../../types';
 
 export type Props = {
-  headerHeight: number;
   columns: ColumnProps[];
+  headerHeight: number;
 };
 
-export default function({ headerHeight, columns }: Props) {
+export default function Headers({ headerHeight, columns }: Props) {
   return (
     <div style={{ display: 'flex', height: headerHeight }}>
-      {columns.map((column, index) => (
-        <div key={index} style={{ width: column.width }}>
-          {(column.headerRenderer && column.headerRenderer(column)) || <div />}
-        </div>
-      ))}
+      {columns.map(renderColumn)}
     </div>
   );
+}
+
+function renderColumn(column: ColumnProps, index: number) {
+  const Header = column.headerRenderer || FallbackHeader;
+
+  return (
+    <div key={index} style={{ width: column.width }}>
+      <Header {...column} />
+    </div>
+  );
+}
+
+function FallbackHeader() {
+  return <div />;
 }
